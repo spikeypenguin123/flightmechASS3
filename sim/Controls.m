@@ -18,13 +18,13 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t)
             end
         case 2
             if t >= 1 && t <= 1.5
-                delta_e = deg2rad(5);
+                delta_a = deg2rad(5);
             end
         case 3
             if t >= 1 && t <= 1.5
                 delta_r = deg2rad(5);
             end
-            
+        % TODO: cases 4-8
         otherwise
             disp("No flight plan found.")
     end
