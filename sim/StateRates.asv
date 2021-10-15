@@ -37,6 +37,9 @@ udot = (m*gx + F_Ax + F_Tx)/m + r*v - q*w;
 vdot = (m*gy + F_Ay + F_Ty)/m - r*u + p*w;
 wdot = (m*gz + F_Az + F_Tz)/m + q*u - p*v;
 
+udot = r*v - q*w - g*sin(theta) + F_x/m;
+vdot = -r*u + p*w + g*sin(phi)*cos(theta
+
 
 % Body rates time derivatives
 C0 = Ixx/Izz - Ixz^2;
@@ -73,9 +76,9 @@ xedot = positiondot(1);
 yedot = positiondot(2);
 zedot = positiondot(3);
 
-xedot = (cos(psi)*cos(theta))*u + (cos(psi)*sin(phi) - sin(psi)*cos(phi))*v + (cos(psi)*sin(theta)*cos(phi) + sin(psi)*sin(phi))*w;
-yedot = (sin(psi)*cos(theta))*u + (sin(psi)*sin(theta)*sin(phi) + cos(pi)*cos(phi))*v + (sin(psi)*sin(theta)*cos(phi) - cos(psi)*sin(phi))*w;
-zedot = -sin(theta)*u + (cos(theta)*sin(phi))
+% xedot = (cos(psi)*cos(theta))*u + (cos(psi)*sin(phi) - sin(psi)*cos(phi))*v + (cos(psi)*sin(theta)*cos(phi) + sin(psi)*sin(phi))*w;
+% yedot = (sin(psi)*cos(theta))*u + (sin(psi)*sin(theta)*sin(phi) + cos(pi)*cos(phi))*v + (sin(psi)*sin(theta)*cos(phi) - cos(psi)*sin(phi))*w;
+% zedot = -sin(theta)*u + (cos(theta)*sin(phi))*v + (cos(theta)*cos(phi))*w;
 
 
 % Time derivative state vector
