@@ -1,6 +1,9 @@
 function [ Rates ] = StateRates([States], [Inertial], [Euler])
 
-% Computing the time derivative of each state rate
+% INPUT:
+% OUTPUT:
+
+%% Computing the time derivative of each state rate
 % State rates --> x(tn) = ⃗xn = [ un vn wn pn qn rn q0n q1n q2n q3n xen yen zen ]T .
 
 u = States(1);
@@ -33,9 +36,13 @@ psi = Euler(3);
 % F_A = 
 % F_T = 
 
-udot = (m*gx + F_Ax + F_Tx)/m + r*v - q*w;
-vdot = (m*gy + F_Ay + F_Ty)/m - r*u + p*w;
-wdot = (m*gz + F_Az + F_Tz)/m + q*u - p*v;
+% udot = (m*gx + F_Ax + F_Tx)/m + r*v - q*w;
+% vdot = (m*gy + F_Ay + F_Ty)/m - r*u + p*w;
+% wdot = (m*gz + F_Az + F_Tz)/m + q*u - p*v;
+
+udot = r*v - q*w - g*sin(theta) + F_x/m;
+vdot = -r*u + p*w + g*sin(phi)*cos(theta) + F_y/m;
+wdot = q*u - p*v + g*cos(phi)*cos(theta) + F_z/m;
 
 
 % Body rates time derivatives
