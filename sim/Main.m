@@ -41,7 +41,8 @@ for t = CONFIG.t
 
     % get required data (gravity, wind, flow etc)
     
-    
+    % [rho, Q] = FlowProperties(altitude, ...
+    %   sqrt(aircraft.u^2+aircraft.v^2+aircraft.w^2), aircraft.inertial.g);
     
         
     % alter the aircraft state here (do fancy calculations and integrations):
