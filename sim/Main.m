@@ -80,3 +80,6 @@ end
 %% plots and analysis
 
 % PlotData(aircraft.vectors);
+
+
+
