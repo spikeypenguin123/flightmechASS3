@@ -8,6 +8,10 @@ addpath('../sim')
 % Go through each case
 for cg = ["CG1", "CG2"]
     for speed = [100, 180]
+        if cg == "CG2" && speed == 180
+            % we only do 3 cases so lets call it here
+            return
+        end
         disp("Case: " + cg + "@" + speed + "kts")
 
         if cg == "CG1"
