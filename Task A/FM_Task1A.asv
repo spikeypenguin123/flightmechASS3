@@ -39,21 +39,25 @@ beta = deg2rad(-7);
 % Computing stability equation in order to find equlibrium CL, alpha,
 % elevator position and throtte position
 
-% Initial guesses
-gamma = 0.5; 
-Cl = 0.5;
-
 % Setting convergence parameters
+kmax = 500;
 eps = 1e-5;
 error = 1;
+
+% Initial guesses
+% Cl = W/(Q*Geom.S);
+Cl = 0.7;
+L = Cl*Q*Geom.S;
+gamma = 0.5; 
+
 while error > eps
     
-    L = Cl*Q*Geom.S;
-    gamma = acos(L/W);
     Cl_next = (W*cos(gamma))/(Q*Geom.S);
+    L_next = Cl_next*Q*Geom.S;
+    gamma_next = acos(L_next/W);
     
-    error = abs(Cl_next - Cl);
-    Cl = Cl_next;
+    error = abs(gamma - gamma_next);
+    gamma = abs(gamma_next);
     
 end
 
@@ -63,15 +67,6 @@ Cleq = W/(Q*Geom.S);
 a0 = (Cl - CLo)/CLa;
 delta_T0 = 0.5;
 delta_e0 = 0;
-
-% Setting convergence parameters
-error = 1;
-while error > eps
-    
-    
-    
-    
-end
 
 %% Task 1 - Part (b): Lateral-directional equilibrium conditions
 
