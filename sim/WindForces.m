@@ -1,5 +1,5 @@
-clc; clear all; close all;
+function [] = WindForces()
 
 
-a = 1;
-b = 2;
+
+end
