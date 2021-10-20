@@ -3,10 +3,7 @@
 % combination of steady control inputs that are required in order to
 % maintain that equilibrium --> aka trimming the simulation! 
 
-% 
-
 % Needs to calculate u for which xd = 0
-
 
 
 % Inputs the initial state vector and the Data
@@ -41,7 +38,7 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     m = aircraft.inertial.m;                        % Mass (kg)
     g = aircraft.inertial.g;                        % Gravity (m/s^2)
     [~, ~, V] = AeroAngles(X0);                     % Velocity (m/s)
-    [rho, Q] = FlowProperties(altitude, V, g);      % Density (kg/m^3) and Dynamic Pressure (kPa)
+    [~, Q] = FlowProperties(altitude, V, g);      % Density (kg/m^3) and Dynamic Pressure (kPa)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
     CLa = aircraft.aero.CLa;                        % dCL/dalpha
 
@@ -64,7 +61,6 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     delta = 10^-5;      % Perturbation Size
 
     
-    
     % What state variables should be constant at steady state? 
     % Forward velocity constant:    udot    = 0
     % Upwards velocity constant:    wdot    = 0
@@ -73,17 +69,28 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     % State wrt perturbation of alpha
     % use calcrates function which is 
     
-    
     % Perturbation Vector: (Only perturb alpha, Throttle and Elevator)
     xbar = [alpha0;U0(1);U0(2)];
     
+    % Initialise the Jacobian
+    J = zeros(length(x_bar));
+
+    
     while err > tol && n < maxIter
+        
+        
+        
         % Calculate state for current trim values
+        
         
         % Calculate state rates for current state and trim values
         % is this the xdot? in the jacobian calc? 
+        % State Rate Vector
+        Xd = TrimRates(X,U,aircraft);
         
-            
+        % Non-linear Function f(x) = [alphaDot;ThrotDot;ElevDot]
+        fX = [Xd(1);Xd(3);Xd(5)];
+        
     % Perturb alpha
         % Recalculate state for current trim values with alpha perturbation
         
@@ -110,7 +117,18 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     
     % Calculate error
     err = control - control_k;
+    
+    % Ensure compliance with the max and min of controls 
+    if  any(U0 < ControlMin)
+        disp("A control Input has dropped below its minimum value");
+    else if any(U0 > ControlMax)
+        disp("A control Input has risen above its maximum value");
+    end
+    
     % Increase iteration number
     n = n+1; 
     end
+    
+    Xtrimmed = X0;
+    Utrimmed = U0;
 end

@@ -1,4 +1,4 @@
-function Xd = trimrates(X,U,aircraft)
+function Xd = TrimRates(X,U,aircraft)
     % Calculate the state rates for the Trim.m function
     % X: Current State Vector
     % U: Control Vector
