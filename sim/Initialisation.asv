@@ -1,4 +1,4 @@
-function [aircraft] = Initialisation(cg,speed,debug)
+function [aircraft] = Initialisation(cg,speed,cfg)
     % Instantiate the aircraft struct based on parameters
     % cg (string): [CG1|CG2]
     % speed (int): [100|180] Knots, true air speed
@@ -13,9 +13,9 @@ function [aircraft] = Initialisation(cg,speed,debug)
     
     aircraft = {};
     
-    if debug
+    if cfg.debug
         disp("Running in debug mode")
-        % alter initial states to match debug variables
+        
         X0=X0+0.1;
         U0=U0+0.1;
     end

@@ -1,4 +1,4 @@
-function  [Pmax, Thrust] = PropForces(rho,V_T,delta_T)
+function  [Pmax, Thrust] = PropForces(rho,V_T,delta_T,Prop)
   
 % INPUT:
 % OUTPUT:

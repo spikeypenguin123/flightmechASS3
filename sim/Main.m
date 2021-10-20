@@ -9,7 +9,7 @@ addpath('Visualiser');
 %% Configure
 
 CONFIG = {};
-CONFIG.debug = false; % bool
+CONFIG.debug = true; % bool
 CONFIG.flight_plan = 1; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 100; % 100, 180
@@ -22,7 +22,7 @@ CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 
 %% Inititalise
 
-aircraft = Initialisation(CONFIG.CG, CONFIG.V);
+aircraft = Initialisation(CONFIG.CG, CONFIG.V, CONFIG.debug);
 
 if CONFIG.visualise
     visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
@@ -37,15 +37,24 @@ end
 for t = CONFIG.t
     [aircraft.controls.delta_T, aircraft.controls.delta_e, ...
         aircraft.controls.delta_a, aircraft.controls.delta_r]...
-            = Controls(CONFIG.flight_plan, t);
+            = Controls(CONFIG.flight_plan, t, aircraft.controls.delta_T,...
+            aircraft.controls.delta_e, aircraft.controls.delta_a, aircraft.controls.delta_r);
 
-    % get required data (gravity, wind, flow etc)
+    %% get required data (gravity, wind, flow etc)
     
-    % [rho, Q] = FlowProperties(altitude, ...
-    %   sqrt(aircraft.u^2+aircraft.v^2+aircraft.w^2), aircraft.inertial.g);
+    % get velocity magnitude
+    V = sqrt(aircraft.state.u^2+aircraft.state.v^2+aircraft.state.w^2);
     
+    [rho, Q] = FlowProperties(abs(aircraft.state.z_e), V,...
+      aircraft.inertial.g);
+  
+    G_body = Gravity(aircraft.inertial.g, aircraft.state.quat, aircraft.inertial.m);
+    
+    % [CL, CD] = WindForces(aircraft.aero,
+    
+    [Pmax, T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
         
-    % alter the aircraft state here (do fancy calculations and integrations):
+    %% alter the aircraft state here (do fancy calculations and integrations):
     
     
     
@@ -65,8 +74,16 @@ for t = CONFIG.t
     
     if CONFIG.debug
         % log some stuff
-        disp(t)
-        disp(aircraft.state)
+        t
+        aircraft.state
+        aircraft.controls
+        V
+        rho
+        Q
+        G_body
+        Pmax
+        T
+        return
     end
     
     % save the aircraft state as a point in time, for plots and analysis

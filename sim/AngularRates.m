@@ -17,8 +17,8 @@ wdot = Rates(3);
 V = sqrt(u^2 + v^2 + w^2);
 
 % Sideslip and angle of attack calculations
-alpha = atan(w/u);
-beta = asin(v/V);
+alpha = atan2(w,u);
+beta = asin2(v,V);
 
 % Sideslip and angle of attack angular rates
 alphadot = (wdot/V)*sec(alpha)*sec(beta);
