@@ -37,7 +37,7 @@ k = Aero.k;
 g = Inertial.g;
 m = Inertial.m;
 eta = Prop.eta;
-Pmax_SL = Prop.P_max;
+Pmax = Prop.P_max;
 
 % Flight characteristics
 W = m*g;
@@ -98,8 +98,7 @@ de = x_pa(2);
 Cd = Cdo + k*CL^2;
 D = Cd*Q*Geom.S;
 T = D;
-Pmax = Pmax_SL*(1.1324*(rho/1.225) - 0.1324); % Need to double check if Pmax is at sea level or not
-dT = (T*V)/(eta*Pmax); 
+dT = (T*V)/(eta*Pmax); % 
 
 
 disp('------------------');
