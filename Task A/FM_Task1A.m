@@ -33,48 +33,45 @@ Q = 0.5*rho*(V^2);
 % Initialising headings
 psi_a = deg2rad(-25);
 gamma = deg2rad(-7);
-theta_a = gamma;
+thet_a = gamma;
 beta = deg2rad(-7);
 
 % Computing stability equation in order to find equlibrium CL, alpha,
 % elevator position and throtte position
 
 % Initial guesses
-gamma = 0.5; 
 Cl = 0.5;
 
 % Setting convergence parameters
-eps = 1e-5;
-error = 1;
-while error > eps
-    
-    L = Cl*Q*Geom.S;
-    gamma = acos(L/W);
-    Cl_next = (W*cos(gamma))/(Q*Geom.S);
-    
-    error = abs(Cl_next - Cl);
-    Cl = Cl_next;
-    
-end
-
-Cleq = W/(Q*Geom.S);
-
+Cl = W/(Q*Geom.S);
 
 a0 = (Cl - CLo)/CLa;
-delta_T0 = 0.5;
-delta_e0 = 0;
+a = a0 + Cl/Aero.CLa;
+
+delta_T = 0.5;
+delta_e = 0;
 
 % Setting convergence parameters
 error = 1;
-while error > eps
-    
-    
-    
-    
-end
+% while error > eps
+%     
+%     
+%     
+%     
+% end
 
 %% Task 1 - Part (b): Lateral-directional equilibrium conditions
 
+% Initial guesses
+phi = 0.5;
+da = 0.5;
+dr = 0.5;
 
+error = 1
+% while error > eps
+%     
+%     
+%     
+% end
 
 %% Task 1 - Part (c): Euler Angles
