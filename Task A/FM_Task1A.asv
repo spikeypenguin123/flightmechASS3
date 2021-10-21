@@ -57,8 +57,6 @@ beta = deg2rad(-7);
 
 % Need to check whether to use iteration method or can solve equilibrium
 % conditions through simultaneous equations
-% Need to go through and double check if simplifications for Cm and Euler
-% Angles are valid
 
 %% TASK 1 - Part (a): Longitudinal Equilibrium Conditions
 
@@ -147,10 +145,9 @@ Cva = Cx(phi)*Cy(theta_a)*Cz(psi_a);
 
 % Using aircraft diagram from week 1B Slide 25
 % Determining Euler Angles of body axes with respect to LVLH
-% Double check direction of angles
-phi_v = -phi;
+phi_v = phi;
 theta_v = theta_a + alpha;
-psi_v = psi_a + -beta;
+psi_v = psi_a + abs(beta);
 
 
 disp('-------------------');
