@@ -1,11 +1,9 @@
-function [CL,CD] = WindForces(aircraft,alpha,V,AngularRates,X,U)
+function [CL,CD] = WindForces(Aero,alpha,V,[AngularRates],[States],[Controls])
 
     % INPUT:
     % OUTPUT:
-    % CL: lift coeff
-    % CD: drag coeff
-    
-    % Computing Wind Forces
+
+    %% Computing Wind Forces
     % Using material from lecture Week 8B
 
     % Coefficients to compute lift coefficient
@@ -23,8 +21,8 @@ function [CL,CD] = WindForces(aircraft,alpha,V,AngularRates,X,U)
 
     % Angular Position/Rates and Controls
     alphadot = AngularRates(1);
-    q = X(5);
-    delta_e = U(2);
+    q = States(5);
+    delta_e = Controls(2);
 
     % Normalising States and Controls
     alphadot_hat = (alphadot*c)/(2*V);

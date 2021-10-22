@@ -1,17 +1,20 @@
-function [rho, Q] = FlowProperties(aircraft)
-    % In: altitude (m), airspeed (m/s), accel due to gravity (m/s^2)
-    % Out: density (kg/m^2), dynamic pressure (N/m^2)
+function [rho, Q] = FlowProperties(aircraft,V)
+    % Input: aircraft data, velocity (m/s)
+    % Output: 
+    % rho: density (kg/m^2) 
+    % Q: dynamic pressure (N/m^2)
     % Note: only considers troposphere (altitude<=11km)
     
+    g = aircraft.inertial.g;
     X = PullState(aircraft);        % Get the state vector 
     altitude = -X(13);              % neg z_e
-    V = sqrt(X(1)^2+X(2)^2+X(3)^2); % velocity (m/)
+    V = sqrt(X(1)^2+X(2)^2+X(3)^2); % velocity (m/s)
     
-    % from literature:
-    P_0 = 101325;         % Pressure at sea level (Pa)
-    T_0 = 15+273.15;      % Temperature at sea level (K)
-    T_11 = -56.5+273.15;  % Temperature at 11km (K)
-    R = 287;              % Gas constant, m^2/s^2/K
+    % Constants (from literature):
+    P_0 = 101325;         % Pressure at sea level       (Pa)
+    T_0 = 15+273.15;      % Temperature at sea level    (K)
+    T_11 = -56.5+273.15;  % Temperature at 11km         (K)
+    R = 287;              % Gas constant,               (m^2/s^2/K)
     
     % assuming linear distribution of temp we find the lapse rate:
     L = (T_0-T_11)/11000;

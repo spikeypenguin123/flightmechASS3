@@ -45,7 +45,7 @@ for t = CONFIG.t
     % get velocity magnitude
     V = sqrt(aircraft.state.u^2+aircraft.state.v^2+aircraft.state.w^2);
     
-    [rho, Q] = FlowProperties(aircraft);
+    [rho, Q] = FlowProperties(aircraft,V);
   
     G_body = Gravity(aircraft.inertial.g, aircraft.state.quat, aircraft.inertial.m);
     

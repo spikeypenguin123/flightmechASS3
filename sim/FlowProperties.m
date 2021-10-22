@@ -1,5 +1,5 @@
-function [rho, Q] = FlowProperties(aircraft)
-    % Input: aircraft data
+function [rho, Q] = FlowProperties(aircraft,V)
+    % Input: aircraft data, velocity (m/s)
     % Output: 
     % rho: density (kg/m^2) 
     % Q: dynamic pressure (N/m^2)
@@ -8,7 +8,6 @@ function [rho, Q] = FlowProperties(aircraft)
     g = aircraft.inertial.g;
     X = PullState(aircraft);        % Get the state vector 
     altitude = -X(13);              % neg z_e
-    V = sqrt(X(1)^2+X(2)^2+X(3)^2); % velocity (m/s)
     
     % Constants (from literature):
     P_0 = 101325;         % Pressure at sea level       (Pa)

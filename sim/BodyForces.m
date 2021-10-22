@@ -1,50 +1,58 @@
-function [Forces, Moments] = BodyForces(FlightData,alpha,beta,alphadot,betadot,rho,V,[States],[Controls])
 
-    % INPUT:
-    % OUTPUT:
+function [Forces, Moments] = BodyForces(aircraft,alpha,beta,AngularRates,rho,V,X,U)
 
-    %% Computing the Body Forces and moments of the aircraft in the Body axes
+    % INPUT 
+    % aircraft data, 
+    % alpha: AoA
+    % beta: Sideslip angle
+    
+    
+    % OUTPUT
+    % Forces: 
+    % Moments: 
+
+    % Computing the Body Forces and moments of the aircraft in the Body axes
     % Content from lecture Week 3A and Week 8B
     % NOTE: Still need to do rotation on matrix 20/10
 
     % Reading in data
-    Cm0 = FlightData.Aero.Cmo;
-    Cma = FlightData.Aero.Cma;
-    Cmad = FlightData.Aero.Cmad;
-    Cmq = FlightData.Aero.Cmq;
-    Cmde = FlightData.Aero.Cmde;
-    % CY0 = FlightData.Aero.;
-    CYb = FlightData.Aero.Cyb;
-    CYbd = FlightData.Aero.Cybd;
-    CYr = FlightData.Aero.Cyr;
-    CYp = FlightData.Aero.Cyp;
-    CYda = FlightData.Aero.Cyda;
-    CYdr = FlightData.Aero.Cydr;
-    % Cl0 = FlightData.Aero.;
-    Clb = FlightData.Aero.Clb;
-    Clbd = FlightData.Aero.Clbd;
-    Clr = FlightData.Aero.Clr;
-    Clp = FlightData.Aero.Clp;
-    Clda = FlightData.Aero.Clda;
-    Cldr = FlightData.Aero.Cldr;
-    % Cn0 = FlightData.Aero.;
-    Cnb = FlightData.Aero.Cnb;
-    Cnbd = FlightData.Aero.Cnbd;
-    Cnr = FlightData.Aero.Cnr;
-    Cnp = FlightData.Aero.Cnp;
-    Cnda = FlightData.Aero.Cnda;
-    Cndr = FlightData.Aero.Cndr;
+    Cm0 = aircraft.Aero.Cmo;
+    Cma = aircraft.Aero.Cma;
+    Cmad = aircraft.Aero.Cmad;
+    Cmq = aircraft.Aero.Cmq;
+    Cmde = aircraft.Aero.Cmde;
+    % CY0 = aircraft.Aero.;
+    CYb = aircraft.Aero.Cyb;
+    CYbd = aircraft.Aero.Cybd;
+    CYr = aircraft.Aero.Cyr;
+    CYp = aircraft.Aero.Cyp;
+    CYda = aircraft.Aero.Cyda;
+    CYdr = aircraft.Aero.Cydr;
+    % Cl0 = aircraft.Aero.;
+    Clb = aircraft.Aero.Clb;
+    Clbd = aircraft.Aero.Clbd;
+    Clr = aircraft.Aero.Clr;
+    Clp = aircraft.Aero.Clp;
+    Clda = aircraft.Aero.Clda;
+    Cldr = aircraft.Aero.Cldr;
+    % Cn0 = aircraft.Aero.;
+    Cnb = aircraft.Aero.Cnb;
+    Cnbd = aircraft.Aero.Cnbd;
+    Cnr = aircraft.Aero.Cnr;
+    Cnp = aircraft.Aero.Cnp;
+    Cnda = aircraft.Aero.Cnda;
+    Cndr = aircraft.Aero.Cndr;
 
-    p = States(4);
-    q = States(5);
-    r = States(6);
+    p = X(4);
+    q = X(5);
+    r = X(6);
 
-    delta_a = Controls(3);
-    delta_e = Controls(2);
+    delta_e = U(2);
+    delta_a = U(3);
 
-    S = FlightData.Geom.S;
-    b = FlightData.Geom.b;
-    c = FlightData.Geom.c;
+    S = aircraft.Geom.S;
+    b = aircraft.Geom.b;
+    c = aircraft.Geom.c;
 
     Q = 0.5*rho*V^2;
 
@@ -53,12 +61,12 @@ function [Forces, Moments] = BodyForces(FlightData,alpha,beta,alphadot,betadot,r
     phat = (p*c)/(2*V);
     rhat = (r*c)/(2*V);
 
-    alphadot_hat = (alphadot*c)/(2*V);
-    betadot_hat = (betadot*c)/(2*V);
+    alphadot_hat = (AngularRates(1)*c)/(2*V);
+    betadot_hat = (AngularRates(2)*c)/(2*V);
 
     % Force Coefficients
     CY = CY0 + CYb*beta + CYbd*beta_dot + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;
-    [CL,CD] = WindForces(FlightData,alpha,V,[AngularRates],[States],[Controls]);
+    [CL,CD] = WindForces(aircraft,alpha,V,AngularRates,X,U);
 
     % Forces
     D = CD*Q*S;
