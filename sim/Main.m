@@ -32,7 +32,7 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-aircraft = Trim(aircraft);
+% aircraft = Trim(aircraft);
 
 for t = CONFIG.t
     [aircraft.controls.delta_T, aircraft.controls.delta_e, ...
@@ -45,8 +45,7 @@ for t = CONFIG.t
     % get velocity magnitude
     V = sqrt(aircraft.state.u^2+aircraft.state.v^2+aircraft.state.w^2);
     
-    [rho, Q] = FlowProperties(abs(aircraft.state.z_e), V,...
-      aircraft.inertial.g);
+    [rho, Q] = FlowProperties(aircraft);
   
     G_body = Gravity(aircraft.inertial.g, aircraft.state.quat, aircraft.inertial.m);
     

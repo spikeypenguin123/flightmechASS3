@@ -7,6 +7,6 @@ function Xd = TrimRates(X,U,aircraft)
     Xd = zeros(13,1);   % Initialise xdot for speed (alphadot and betadot)
 
     for i = 1:3
-        Xd = StateRates(X,Xd,U,aircraft);
+        Xd = StateRates(X,U,aircraft);
     end
 end

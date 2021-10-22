@@ -1,34 +1,42 @@
-function [ Rates ] = StateRates([States], [Inertial], [Euler])
+function Xd = StateRates(X, U, aircraft)
 
     % INPUT:
+    % X: State vector
+    % U: Control vector
+    % aircraft data
+    
     % OUTPUT:
-
-    %% Computing the time derivative of each state rate
+    % Computing the time derivative of each state rate
     % State rates --> x(tn) = ⃗xn = [ un vn wn pn qn rn q0n q1n q2n q3n xen yen zen ]T .
 
-    u = States(1);
-    v = States(2);
-    w = States(3);
-    p = States(4);
-    q = States(5);
-    r = States(6);
-    q0 = States(7);
-    q1 = States(8);
-    q2 = States(9);
-    q3 = States(10);
-    q4 = States(11);
-    xe = States(12);
-    ye = States(13);
-    ze = States(14);
-
-    Ixx = Inertial(1);
-    Iyy = Inertial(2);
-    Izz = Inertial(3);
-    Ixz = Inertial(4);
-
-    phi = Euler(1);
-    theta = Euler(2);
-    psi = Euler(3);
+    % State vector
+    u = X(1);
+    v = X(2);
+    w = X(3);
+    p = X(4);
+    q = X(5);
+    r = X(6);
+    q0 = X(7);
+    q1 = X(8);
+    q2 = X(9);
+    q3 = X(10);
+    xe = X(11);
+    ye = X(12);
+    ze = X(13);
+    
+    % Attitude in Euler angles 
+    att_eul = q2e(X(7:10));
+    phi = att_eul(1);
+    the = att_eul(2);
+    psi = att_eul(3);
+    
+    % Inertial Data
+    Ixx = aircraft.inertial.Ixx;
+    Iyy = aircraft.inertial.Iyy;
+    Izz = aircraft.inertial.Izz;
+    Ixz = aircraft.inertial.Ixz;
+    m = aircraft.inertial.m;
+    
 
 
     % Velocity time derivatives
@@ -86,6 +94,6 @@ function [ Rates ] = StateRates([States], [Inertial], [Euler])
 
 
     % Time derivative state vector
-    Rates = [udot vdot wdot pdot qdot rdot q0dot q1dot q2dot q3dot xedot yedot zedot]';
+    Xd = [udot vdot wdot pdot qdot rdot q0dot q1dot q2dot q3dot xedot yedot zedot]';
 
 end

@@ -1,7 +1,12 @@
+% Computes the force of gravity in the body axes 
+
+% Inputs:
+% g: gravity (m/s^2)
+% m: mass (kg)
+% q: 4x1 quaternions (rad) 
+
+% Output: 
+% G_body: 3x1 Force (N)
 function G_body = Gravity(g,q,m)
-    % in: gravitational constant g (m/s^2), 4x1 quaternions q, mass m (kg)
-    % out: 3x1 G_body (N)
-    
-    G_body = g*m*[0 0 1]*DCM(q)';
-    
+    G_body = DCM(q)*[0;0;m*g];
 end
