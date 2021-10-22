@@ -8,12 +8,12 @@
 % DO NOT NEED TO TRIM TURNS OF LOOPS SO ONLY FOR STEADY LEVEL FLIGHT
 % ONLY perturb ALPHA, THROTTLE, ELEVATOR
 
-% Inputs the initial state vector and the Data
+% Inputs
 % XO = [uvw,pqr,q0q1q2q3,xyz_e]
 % aircraft: struct containing aircraft data
 
-% Outputs the trim tab setting angles in radians 
-% Xtrimmed = 
+% Outputs 
+% Xtrimmed = Trimmed state vector (same structure as input)
 % Utrimmed = [dT (Thrust), de (elevator), da (aileron), dr (rudder)]'
 
 % Other Variables
@@ -50,11 +50,11 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
     CLa = aircraft.aero.CLa;                        % dCL/dalpha
 
-    % Estimate CL
+    % Estimate CL (lift coefficient)
     CL = m*g/Q/S;
     
     % Guess initial alpha and beta (these guesses were defined in Lec )
-    alpha0 = (CL-CL0)/CLa;
+    alpha0 = (CL-CL0)/CLa;  % Estimate for current AoA (rad)
     dT0 = 0.5;              % Initial Thrust    (Newtons)
     de0 = 0;                % Initial Elevator  (rad)
     da0 = 0;                % Initial Aileron   (rad)
@@ -71,9 +71,6 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     % Forward velocity constant:    udot    = 0
     % Upwards velocity constant:    wdot    = 0
     % Pitch should be constant:     q       = 0
-    
-    % State wrt perturbation of alpha
-    % use calcrates function which is 
     
     % Perturbation Vector: (Only perturb alpha, Throttle and Elevator)
     xbar0 = [alpha0;U0(1);U0(2)];
@@ -103,8 +100,8 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
         % Perturb alpha
         % Recalculate state for current trim values with alpha perturbation
         alphaPert = xbar0(1) + delta;
-        X(1) = V*cos(alphaPert);    % u update
-        X(3) = V*sin(alphaPert);    % w update
+        X(1) = V*cos(alphaPert);            % u: x-vel update
+        X(3) = V*sin(alphaPert);            % w: z-vel update
         Xd = TrimRates(X,U,aircraft);       % Update state rates 
         J(:,1) = (Xd - Xd0)./(2.*deltax);   % Jacobian for alpha dependance
 
@@ -123,7 +120,12 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
 
         % Calculate error
         err = abs((xbar - xbar0)./delta);
-        xbar0 = xbar;   % Update xbar
+        xbar0 = xbar;   % Update xbar for next loop
+        
+        % Update Control (U0) Vector
+        U0(1) = xbar0(2);   % Updated perturbed throttle --> save to Control U0
+        U0(2) = xbar0(3);   % Updated perturbed elevator --> save to Control U0
+        
         
         % Ensure compliance with the max and min of controls 
         if  any(U0 < ControlMin)

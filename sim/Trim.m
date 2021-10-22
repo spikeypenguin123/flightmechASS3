@@ -122,6 +122,14 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
         err = abs((xbar - xbar0)./delta);
         xbar0 = xbar;   % Update xbar for next loop
         
+        % Update Control (U0) Vector
+        U0(1) = xbar0(2);   % Updated perturbed throttle --> save to Control U0
+        U0(2) = xbar0(3);   % Updated perturbed elevator --> save to Control U0
+        
+        % Update State (X0) Vector
+        X0(1) = V*cos(xbar(1));     % Update perturbed x-velocity --> save to State X0
+        X0(3) = V*sin(xbar(1));     % Update perturbed z-velocity --> save to State X0
+        
         % Ensure compliance with the max and min of controls 
         if  any(U0 < ControlMin)
             disp("A control Input has dropped below its minimum value");
