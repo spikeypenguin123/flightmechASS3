@@ -32,7 +32,7 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-% aircraft = Trim(aircraft);
+aircraft = Trim(aircraft);
 
 for t = CONFIG.t
     [aircraft.controls.delta_T, aircraft.controls.delta_e, ...

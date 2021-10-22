@@ -21,21 +21,9 @@
 % xbar: The new vector containing the variables requiring perturbation
 
 
-function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
-    u = X0(1);    % (m/s)       1
-    v = X0(2);    % (m/s)       2
-    w = X0(3);    % (m/s)       3
-    p = X0(4);    % (rad/s)     4
-    q = X0(5);    % (rad/s)     5
-    r = X0(6);    % (rad/s)     6
-    q0 = X0(7);   % quat w      7
-    q1 = X0(8);   % quat x      8
-    q2 = X0(9);   % quat y      9
-    q3 = X0(10);  % quat z      10
-    xe = X0(11);  % (m)         11
-    ye = X0(12);  % (m)         12
-    ze = X0(13);  % (m)         13
-   
+function aircraft = Trim(aircraft)
+    % Get the state variables into a single vector
+    X0 = PullState(aircraft);
     
     % Control Limits (radians): [dT, de, da, dr]
     ControlMin = aircraft.control_limits.Lower;
@@ -45,6 +33,7 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     S = aircraft.geo.S;
     m = aircraft.inertial.m;                        % Mass (kg)
     g = aircraft.inertial.g;                        % Gravity (m/s^2)
+    altitude = -X0(13);                             % Altitude, -z_e (m)
     [~, ~, V] = AeroAngles(X0);                     % Velocity (m/s)
     [~, Q] = FlowProperties(altitude, V, g);      % Density (kg/m^3) and Dynamic Pressure (kPa)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
@@ -66,17 +55,12 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
     maxIter = 1000;     % Number of iterations
     n = 1;              % Intitialise Iteration counter
     delta = 10^-5;      % Perturbation Size
-
-    % What state variables should be constant at steady state? 
-    % Forward velocity constant:    udot    = 0
-    % Upwards velocity constant:    wdot    = 0
-    % Pitch should be constant:     q       = 0
     
     % Perturbation Vector: (Only perturb alpha, Throttle and Elevator)
     xbar0 = [alpha0;U0(1);U0(2)];
     
     % Initialise the Jacobian
-    J = zeros(length(x_bar));
+    J = zeros(length(xbar0));
 
     % Newton-Ralphson Numerical Solver
     while err > tol && n < maxIter
@@ -133,14 +117,14 @@ function [Xtrimmed, Utrimmed] = Trim(X0, aircraft)
         % Ensure compliance with the max and min of controls 
         if  any(U0 < ControlMin)
             disp("A control Input has dropped below its minimum value");
-        else if any(U0 > ControlMax)
+        elseif any(U0 > ControlMax)
             disp("A control Input has risen above its maximum value");
         end
 
         % Increase iteration number
         n = n+1; 
-    end
+    end    
     
-    Xtrimmed = X0;
-    Utrimmed = U0;
+    % Set the Trimmed State and Control to the aircraft struct
+    aircraft = PushState(X0,U0,aircraft);
 end
