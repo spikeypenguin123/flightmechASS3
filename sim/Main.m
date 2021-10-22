@@ -32,7 +32,7 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-% aircraft = Trim(aircraft);
+aircraft = Trim(aircraft);
 
 for t = CONFIG.t
     [aircraft.controls.delta_T, aircraft.controls.delta_e, ...
@@ -41,17 +41,18 @@ for t = CONFIG.t
             aircraft.controls.delta_e, aircraft.controls.delta_a, aircraft.controls.delta_r);
 
     %% get required data (gravity, wind, flow etc)
-    
+%     AngularRates = AngularRates(aircraft.vectors.state,Xd);
+%     [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,aircraft.vectors.state,aircraft.vectors.control,AngularRates); 
     % get velocity magnitude
-    V = sqrt(aircraft.state.u^2+aircraft.state.v^2+aircraft.state.w^2);
-    
-    [rho, Q] = FlowProperties(aircraft,V);
-  
-    G_body = Gravity(aircraft.inertial.g, aircraft.state.quat, aircraft.inertial.m);
-    
-    % [CL, CD] = WindForces(aircraft.aero,
-    
-    [Pmax, T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
+%     V = sqrt(aircraft.state.u^2+aircraft.state.v^2+aircraft.state.w^2);
+%     
+%     [rho, Q] = FlowProperties(aircraft,V);
+%   
+%     G_body = Gravity(aircraft.inertial.g, aircraft.state.quat, aircraft.inertial.m);
+%     
+%     [CL,CD] = WindForces(aircraft,X,U,alpha,V,AngularRates);
+%     
+%     [Pmax, T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
         
     %% alter the aircraft state here (do fancy calculations and integrations):
     
@@ -82,6 +83,8 @@ for t = CONFIG.t
         G_body
         Pmax
         T
+        CL
+        CD
         return
     end
     

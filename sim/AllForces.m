@@ -1,23 +1,23 @@
 % Function to do ALL the Forces
 
 
-function [CL, CD, Grav, Thrust, Body, rho, Q] = AllForces(aircraft,X,U,AngularRates)
+function [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,AngularRates)
     
     % AoA, sideslip and velocity
     [alpha, beta, V] = AeroAngles(X);
 
-    [rho, Q] = FlowProperties(aircraft,V);
+    [rho, ~] = FlowProperties(aircraft,V);
     
     % Wind Forces
-    [CL,CD] = WindForces(aircraft,alpha,V,AngularRates,X,U);
+    [CL,CD] = WindForces(aircraft,X,U,alpha,V,AngularRates);
     
     % Body Forces
-    [Forces, Moments] = BodyForces(aircraft,alpha,beta,AngularRates,rho,V,X,U);    
+    [F_B, M_B] = BodyForces(aircraft,X,U,alpha,beta,AngularRates,rho,V);    
     
     % Gravity Forces
-    G_body = Gravity(aircraft.inertial.g,[X(7);X(8);X(9);X(10)],aircraft.inertial.m);
+    F_G = Gravity(aircraft.inertial.g,[X(7);X(8);X(9);X(10)],aircraft.inertial.m);
     
     % Thrust Forces
-    [Pmax, T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
+    [Pmax, F_T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
 
 end

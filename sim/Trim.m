@@ -33,9 +33,9 @@ function aircraft = Trim(aircraft)
     S = aircraft.geo.S;
     m = aircraft.inertial.m;                        % Mass (kg)
     g = aircraft.inertial.g;                        % Gravity (m/s^2)
-    altitude = -X0(13);                             % Altitude, -z_e (m)
+%     altitude = -X0(13);                             % Altitude, -z_e (m)
     [~, ~, V] = AeroAngles(X0);                     % Velocity (m/s)
-    [~, Q] = FlowProperties(altitude, V, g);      % Density (kg/m^3) and Dynamic Pressure (kPa)
+    [~, Q] = FlowProperties(aircraft, V);      % Density (kg/m^3) and Dynamic Pressure (kPa)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
     CLa = aircraft.aero.CLa;                        % dCL/dalpha
 

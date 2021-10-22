@@ -1,4 +1,4 @@
-function [alphadot, betadot] = AngularRates([States],[Rates])
+function AngularRates = AngularRates(X,Xd)
 
 % INPUT: Body velcoities and accelerations
 % OUTPUT: Angular Rates for angle of attack and sideslip
@@ -6,12 +6,12 @@ function [alphadot, betadot] = AngularRates([States],[Rates])
 %% Computing Angular Rates
 % Week 9A Slide 7
 
-u = States(1);
-v = States(2);
-w = States(3);
-udot = Rates(1);
-vdot = Rates(2);
-wdot = Rates(3);
+u = X(1);
+v = X(2);
+w = X(3);
+udot = Xd(1);
+vdot = Xd(2);
+wdot = Xd(3);
 
 % Magnitude of velocities
 V = sqrt(u^2 + v^2 + w^2);
@@ -21,8 +21,8 @@ alpha = atan2(w,u);
 beta = asin2(v,V);
 
 % Sideslip and angle of attack angular rates
-alphadot = (wdot/V)*sec(alpha)*sec(beta);
-betadot = (vdot/V)*sec(beta);
+AngularRates(1) = (wdot/V)*sec(alpha)*sec(beta);    % alphad: Angle of attack rate 
+AngularRates(2) = (vdot/V)*sec(beta);                       % betad: Sideslip rate
     
 
 end

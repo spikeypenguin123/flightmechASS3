@@ -1,7 +1,8 @@
-function Xd = StateRates(X, U, aircraft)
+function Xd = StateRates(X, U, aircraft, AngularRates)
 
     % INPUT:
     % X: State vector
+    % Xd0: State vector (All zero when it is called in Trimrates.m initially)
     % U: Control vector
     % aircraft data
     
@@ -37,7 +38,9 @@ function Xd = StateRates(X, U, aircraft)
     Ixz = aircraft.inertial.Ixz;
     m = aircraft.inertial.m;
     
-
+    % Forces 
+    [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,AngularRates);
+    
 
     % Velocity time derivatives
     % m = 

@@ -3,7 +3,7 @@ function  [Pmax, Thrust] = PropForces(rho,V_T,delta_T,Prop)
 % INPUT:
 % OUTPUT:
 
-%% Computing Propulsion Fores
+% Computing Propulsion Fores
 
 rho_SL = 1.225;
 sigma = rho/rho_SL;

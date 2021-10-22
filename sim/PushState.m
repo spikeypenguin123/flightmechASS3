@@ -17,4 +17,5 @@ function aircraft = PushState(X,U,aircraft)
     % Pushing the control variables
     aircraft.controls.delta_T = U(1);   % Thrust    (Newtons)
     aircraft.controls.delta_e = U(2);   % Elevator  (rad)
+    
 end

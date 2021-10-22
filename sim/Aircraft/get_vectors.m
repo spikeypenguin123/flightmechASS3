@@ -1,4 +1,5 @@
-function [state_vec, control_vec, attitude_vec] = get_vectors(aircraft)
+function     [state_vec, control_vec, attitude_vec] = get_vectors(aircraft)
+
     % Vectorises the aircraft variables
 
     state_vec = [
