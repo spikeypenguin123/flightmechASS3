@@ -1,0 +1,4 @@
+clc
+clear
+clear all
+
