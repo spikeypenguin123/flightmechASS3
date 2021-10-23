@@ -101,39 +101,35 @@ for cg = ["CG1", "CG2"]
         Lb = (Q*S*b*Clb)/Ixx;
         Lp = (Q*S*b^2*Clp)/(2*Ixx*u1);
         Lr = (Q*S*b^2*Clr)/(2*Ixx*u1);
-        NTb = 1; % Double check
         
         A_lat = [Yb/u1 Yp/u1 (Yr/u1 - 1) (g*cos(theta1))/u1 0 ;
-                 (Lb + A1*(Nb + NTb))/(1 - A1*B1) (Lp + A1*Np)/(1 - A1*B1) (Lr + A1*Nr)/(1 - A1*B1) 0 0 ;
-                 (Nb + NTb + B1*Lb)/(1 - A1*B1) (Np + B1*Lp)/(1 - A1*B1) (Nr + B1*Lr)/(1 - A1*B1) 0 0 ;
-                 0 1 tan(theta1) 0 0 ;
-                 0 0 sec(theta1) 0 0 ];
-             
-        e_lat = eig(A_lat);
-        [omega_lat, zeta_lat] = damp(e_lat); % Need to double check
-        disp('Eigenvalues of lateral motion: ');
-        disp('Natural Frequency and Damping Ratio: ');
-
+                 (Lb + A1*(Nb + NTb))/(1 - A1*B1) (Lp + A1*Np)/(1 - A1*B1) (Lr 
+        
+        disp('------------------------------------');
         
         %% Part B
         disp('Part B');
         
         
+        disp('------------------------------------');
         
         %% Part C
         disp('Part C');
         
-
+        
+        disp('------------------------------------');
         
         %% Part D
         disp('Part D');
         
-
+        
+        disp('------------------------------------');
         
         %% Part E
         disp('Part E');
         
-
+        
+        disp('------------------------------------');
         
         %% Part F
         disp('Part F');
