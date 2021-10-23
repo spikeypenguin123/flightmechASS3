@@ -43,17 +43,19 @@ function Xd = StateRates(X, U, aircraft, AngularRates)
     
 
     % Velocity time derivatives
-    % m = 
-    % F_A = 
-    % F_T = 
+    F_x = F_B(1);
+    F_y = F_B(2);
+    F_z = F_B(3);
+    
+    % double check that the gravity forces correspond to the right
+    % array elements
+    F_gx = F_G(1); 
+    F_gy = F_G(2);
+    F_gz = F_G(3);
 
-    % udot = (m*gx + F_Ax + F_Tx)/m + r*v - q*w;
-    % vdot = (m*gy + F_Ay + F_Ty)/m - r*u + p*w;
-    % wdot = (m*gz + F_Az + F_Tz)/m + q*u - p*v;
-
-    udot = r*v - q*w - g*sin(theta) + F_x/m;
-    vdot = -r*u + p*w + g*sin(phi)*cos(theta) + F_y/m;
-    wdot = q*u - p*v + g*cos(phi)*cos(theta) + F_z/m;
+    udot = r*v - q*w - g*sin(theta) + (F_x + F_gx + F_T)/m;
+    vdot = -r*u + p*w + g*sin(phi)*cos(theta) + (F_y + F_gy)/m;
+    wdot = q*u - p*v + g*cos(phi)*cos(theta) + (F_z + F_gz)/m;
 
 
     % Body rates time derivatives
@@ -68,10 +70,10 @@ function Xd = StateRates(X, U, aircraft, AngularRates)
     C8 = Ixx/C0;
     C9 = C8*(Ixx - Iyy) + C2*Ixz;
 
-    %%%%%% Need to define moments
-    % L = M_Ax + M_Tx;
-    % M = M_Ay + M_Ty;
-    % N = M_Az + M_Tz;
+    % Moments
+    L = M_B(1);
+    M = M_B(2);
+    N = M_B(3);
 
     pdot = C3*p*q + C4*q*r + C1*L + C2*N;
     qdot = C7*p*r - C6*(p^2 - r^2) + C5*M;
@@ -86,15 +88,10 @@ function Xd = StateRates(X, U, aircraft, AngularRates)
 
 
     % Position time derivatives
-    positiondot = (Cz(-psi)*Cy(-theta)*Cx(-phi))*[u v w]';
+    positiondot = (Cz(-psi)*Cy(-theta)*Cx(-phi))*[u v w]'; % Going from body to earth
     xedot = positiondot(1);
     yedot = positiondot(2);
     zedot = positiondot(3);
-
-    % xedot = (cos(psi)*cos(theta))*u + (cos(psi)*sin(phi) - sin(psi)*cos(phi))*v + (cos(psi)*sin(theta)*cos(phi) + sin(psi)*sin(phi))*w;
-    % yedot = (sin(psi)*cos(theta))*u + (sin(psi)*sin(theta)*sin(phi) + cos(pi)*cos(phi))*v + (sin(psi)*sin(theta)*cos(phi) - cos(psi)*sin(phi))*w;
-    % zedot = -sin(theta)*u + (cos(theta)*sin(phi))*v + (cos(theta)*cos(phi))*w;
-
 
     % Time derivative state vector
     Xd = [udot vdot wdot pdot qdot rdot q0dot q1dot q2dot q3dot xedot yedot zedot]';
