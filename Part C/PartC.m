@@ -112,7 +112,11 @@ for cg = ["CG1", "CG2"]
         e_lat = eig(A_lat);
         [omega_lat, zeta_lat] = damp(e_lat); % Need to double check
         disp('Eigenvalues of lateral motion: ');
-        disp('Natural Frequency and Damping Ratio: ');
+        disp(num2str(e_lat));
+        disp('Natural Frequency: ');
+        disp(num2str(omega_lat));
+        disp('Damping Ratio: ');
+        disp(num2str(zeta_lat));
 
         
         %% Part B
