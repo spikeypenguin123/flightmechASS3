@@ -1,4 +1,4 @@
-function Xd = StateRates(aircraft, X, U, AngularRates)
+function Xd = StateRates(aircraft, X, U, angular_rates)
 
     % INPUT:
     % X: State vector
@@ -40,7 +40,7 @@ function Xd = StateRates(aircraft, X, U, AngularRates)
     z_e = X(13);
     
     % Forces 
-    [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,AngularRates)
+    [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,angular_rates);
     
 
     % Velocity time derivatives

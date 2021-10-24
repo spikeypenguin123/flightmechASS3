@@ -60,7 +60,7 @@ for t = CONFIG.t
         
     %% alter the aircraft state here (do fancy calculations and integrations):
     
-    [X, dx_prev] = Integrate(aircraft, CONFIG.t_step, dx_prev);
+    [X, dx_prev] = Integrate(aircraft, CONFIG.t_step, dx_prev, CONFIG.debug);
     
     aircraft.state.u        = X(1);     % (m/s)       
     aircraft.state.v        = X(2);     % (m/s)       

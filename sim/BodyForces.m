@@ -1,5 +1,5 @@
 
-function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,AngularRates,rho,V)
+function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rho,V)
 
     % INPUT 
     % aircraft data, 
@@ -70,19 +70,19 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,AngularRates,rho
     phat = (p*c)/(2*V);
     rhat = (r*c)/(2*V);
 
-    alpha_dot = AngularRates(1);
-    beta_dot = AngularRates(2);
-    alphadot_hat = (AngularRates(1)*c)/(2*V);
-    betadot_hat = (AngularRates(2)*c)/(2*V);
+    alpha_dot = angular_rates(1);
+    beta_dot = angular_rates(2);
+    alphadot_hat = (angular_rates(1)*c)/(2*V);
+    betadot_hat = (angular_rates(2)*c)/(2*V);
 
     % Force Coefficients
     CY = CYb*beta + CYbd*beta_dot + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;  % Removed CYo
-    [CL,CD] = WindForces(aircraft,X,U,alpha,V,AngularRates);
+    [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates);
 
     % Forces
-    D = Cbs*-CD;
-    Y = Cbs*CY;
-    L = Cbs*-CL;
+    D = Cbs*[-CD;0;0];
+    Y = Cbs*[0;CY;0];
+    L = Cbs*[0;0;-CL];
     
     Fx = Q*S*D;
     Fy = Q*S*Y;

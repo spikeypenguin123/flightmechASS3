@@ -1,4 +1,4 @@
-function AngularRates = AngularRates(X,Xd)
+function angular_rates = AngularRates(X,Xd)
 
 % INPUT: Body velcoities and accelerations
 % OUTPUT: Angular Rates for angle of attack and sideslip
@@ -21,8 +21,8 @@ alpha = atan2(w,u);
 beta = asin(v/V);
 
 % Sideslip and angle of attack angular rates
-AngularRates(1) = (wdot/V)*sec(alpha)*sec(beta);    % alphad: Angle of attack rate 
-AngularRates(2) = (vdot/V)*sec(beta);                       % betad: Sideslip rate
+angular_rates(1) = (wdot/V)*sec(alpha)*sec(beta);    % alphad: Angle of attack rate 
+angular_rates(2) = (vdot/V)*sec(beta);                       % betad: Sideslip rate
     
 
 end

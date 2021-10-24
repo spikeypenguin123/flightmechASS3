@@ -1,4 +1,4 @@
-function [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates)
+function [CL,CD] = WindForces(aircraft,X,U,alpha,V,AngularRates)
 
     % INPUT:
     % OUTPUT:
@@ -22,7 +22,7 @@ function [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates)
     c = aircraft.geo.c;
 
     % Angular Position/Rates and Controls
-    alphadot = angular_rates(1);
+    alphadot = AngularRates(1)
     q = X(5);
     delta_e = U(2);
 

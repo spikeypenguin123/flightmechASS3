@@ -1,4 +1,4 @@
-function [x_next, dx] = Integrate(aircraft, t_step, dx_prev)
+function [x_next, dx] = Integrate(aircraft, t_step, dx_prev, debug)
     % In: state vector, t_step
     % Out: next state vector
     % NOTE: This is just pseudocode until StateRates is implemented.
@@ -8,6 +8,13 @@ function [x_next, dx] = Integrate(aircraft, t_step, dx_prev)
     aa = AngularRates(state, dx_prev);
     dx_1 = StateRates(aircraft, state, U, aa);
     A = dx_1.*t_step;
+    
+    if debug
+        % only do the one passthru
+        x_next = state + A;
+        dx = A;
+        return
+    end
     
     aa = AngularRates(state, dx_1);
     dx_2 = StateRates(aircraft, state+A./2, U, aa);
