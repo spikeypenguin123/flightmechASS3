@@ -94,7 +94,13 @@ for t = CONFIG.t
         t
         aircraft.state
         aircraft.controls
-
+        rho
+        Q
+        G_body
+        Pmax
+        T
+        CL
+        CD
         return
     end
     

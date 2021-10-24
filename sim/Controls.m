@@ -11,15 +11,15 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, delta_T
         % cases 1-3 are simple impulses. wait 1 sec before applying.
         case 1
             if t >= 1 && t <= 1.5
-                delta_e = deg2rad(5);
+                delta_e = deg2rad(5)+delta_e;
             end
         case 2
             if t >= 1 && t <= 1.5
-                delta_a = deg2rad(5);
+                delta_a = deg2rad(5)+delta_a;
             end
         case 3
             if t >= 1 && t <= 1.5
-                delta_r = deg2rad(5);
+                delta_r = deg2rad(5)+delta_r;
             end
         % TODO: cases 4-8
         otherwise

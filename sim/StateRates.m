@@ -1,4 +1,4 @@
-function Xd = StateRates(X, U, aircraft, AngularRates)
+function Xd = StateRates(aircraft, X, U, AngularRates)
 
     % INPUT:
     % X: State vector
@@ -9,8 +9,22 @@ function Xd = StateRates(X, U, aircraft, AngularRates)
     % OUTPUT:
     % Computing the time derivative of each state rate
     % State rates --> x(tn) = ⃗xn = [ un vn wn pn qn rn q0n q1n q2n q3n xen yen zen ]T .
-
-    % State vector
+    
+    % Attitude in Euler angles 
+    att_eul = q2e(X(7:10));
+    phi = att_eul(1);
+    theta = att_eul(2);
+    psi = att_eul(3);
+    
+    % Inertial Data
+    Ixx = aircraft.inertial.Ixx;
+    Iyy = aircraft.inertial.Iyy;
+    Izz = aircraft.inertial.Izz;
+    Ixz = aircraft.inertial.Ixz;
+    m = aircraft.inertial.m;
+    g = aircraft.inertial.g;
+    
+    % State
     u = X(1);
     v = X(2);
     w = X(3);
@@ -21,25 +35,12 @@ function Xd = StateRates(X, U, aircraft, AngularRates)
     q1 = X(8);
     q2 = X(9);
     q3 = X(10);
-    xe = X(11);
-    ye = X(12);
-    ze = X(13);
-    
-    % Attitude in Euler angles 
-    att_eul = q2e(X(7:10));
-    phi = att_eul(1);
-    the = att_eul(2);
-    psi = att_eul(3);
-    
-    % Inertial Data
-    Ixx = aircraft.inertial.Ixx;
-    Iyy = aircraft.inertial.Iyy;
-    Izz = aircraft.inertial.Izz;
-    Ixz = aircraft.inertial.Ixz;
-    m = aircraft.inertial.m;
+    x_e = X(11);
+    y_e = X(12);
+    z_e = X(13);
     
     % Forces 
-    [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,AngularRates);
+    [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,AngularRates)
     
 
     % Velocity time derivatives

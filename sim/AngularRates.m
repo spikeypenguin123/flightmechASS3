@@ -18,7 +18,7 @@ V = sqrt(u^2 + v^2 + w^2);
 
 % Sideslip and angle of attack calculations
 alpha = atan2(w,u);
-beta = asin2(v,V);
+beta = asin(v/V);
 
 % Sideslip and angle of attack angular rates
 AngularRates(1) = (wdot/V)*sec(alpha)*sec(beta);    % alphad: Angle of attack rate 
