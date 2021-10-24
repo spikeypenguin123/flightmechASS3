@@ -51,11 +51,11 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     psi = att_eul(3);
     
     % Calculating transformation from stability to body
-    Cbs = Cx(0)*Cy(alpha)*Cz(0);
+    Cba = Cx(0)*Cy(alpha)*Cz(-beta);
 
     % Controls (DO WE NEED THRUST IN THIS)
     delta_e = U(2); % CHECK (not sure if this needs to the updated one inthe loops it is propbs being used inn of teh reference control elev in the aircraft struct)
-    delta_T = U(3);
+    delta_T = U(1);
     delta_a = aircraft.controls.delta_a;
     delta_r = aircraft.controls.delta_r;
     
@@ -80,9 +80,9 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates);
 
     % Forces
-    CX_non = Cbs*[-CD;0;0];
-    CY_non = Cbs*[0;CY;0];
-    CZ_non = Cbs*[0;0;-CL];
+    CX_non = Cba*[-CD;0;0];
+    CY_non = Cba*[0;CY;0];
+    CZ_non = Cba*[0;0;-CL];
     
     Fx = Q*S*CX_non;
     Fy = Q*S*CY_non;
@@ -94,9 +94,9 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     Cn = Cnb*beta + Cnbd*beta_dot + Cnr*rhat + Cnp*phat + Cnda*delta_a + Cndr*delta_r;  % Removed Cno
 
     % Moments
-    L_moment = Cbs*Cl*Q*S*b;
-    M = Cbs*Cm*Q*S*c;
-    N = Cbs*Cn*Q*S*b;
+    L_moment = Cba*Cl*Q*S*b;
+    M = Cba*Cm*Q*S*c;
+    N = Cba*Cn*Q*S*b;
 
     Forces = [-Fx Fy Fz];
     Moments = [L_moment M N]; 
