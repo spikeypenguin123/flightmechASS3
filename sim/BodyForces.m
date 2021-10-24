@@ -80,13 +80,13 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates);
 
     % Forces
-    D = Cbs*[-CD;0;0];
-    Y = Cbs*[0;CY;0];
-    L = Cbs*[0;0;-CL];
+    CX_non = Cbs*[-CD;0;0];
+    CY_non = Cbs*[0;CY;0];
+    CZ_non = Cbs*[0;0;-CL];
     
-    Fx = Q*S*D;
-    Fy = Q*S*Y;
-    Fz = Q*S*L;
+    Fx = Q*S*CX_non;
+    Fy = Q*S*CY_non;
+    Fz = Q*S*CZ_non;
 
     % Calcualting moment coefficients
     Cl = Clb*beta + Clbd*beta_dot + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;  % Removed Clo
@@ -98,7 +98,7 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     M = Cbs*Cm*Q*S*c;
     N = Cbs*Cn*Q*S*b;
 
-    Forces = [-D Y L];
+    Forces = [-Fx Fy Fz];
     Moments = [L_moment M N]; 
 
 end
