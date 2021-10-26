@@ -1,6 +1,6 @@
 
 function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rho,V)
-
+    rho = 1.1889;
     % INPUT 
     % aircraft data, 
     % alpha: AoA
@@ -67,9 +67,10 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     Q = 0.5*rho*V^2;
 
     % Non-dimensionalising
+    % adam: changed phat and rhat to reference b, not c
     qhat = (q*c)/(2*V);
-    phat = (p*c)/(2*V);
-    rhat = (r*c)/(2*V);
+    phat = (p*b)/(2*V);
+    rhat = (r*b)/(2*V);
 
     alpha_dot = angular_rates(1);
     beta_dot = angular_rates(2);
@@ -95,19 +96,25 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     F_Cy = F_coeff(2);
     F_Cz = F_coeff(3);
     
+    
     Fx = Q*S*F_Cx;
     Fy = Q*S*F_Cy;
     Fz = Q*S*F_Cz;
     
+    % Fx *looks* like its off, but thats just because we add thrust later
+    % than michael. we all g
     Forces = [Fx Fy Fz];
 
+    
     % Calcualting moment coefficients
     Cl = Clb*beta + Clbd*betadot_hat + Clr*rhat + Clp*phat + Clda*delta_a + Cldr*delta_r;  
     Cm = Cm0 + Cma*alpha + Cmad*alphadot_hat + Cmq*qhat + Cmde*delta_e;
-    Cn = Cnb*beta + Cnbd*betadot_hat + Cnr*rhat + Cnp*phat + Cnda*delta_a + Cndr*delta_r; 
-
+    Cn = Cnb*beta + Cnbd*betadot_hat + Cnr*rhat + Cnp*phat + Cnda*delta_a + Cndr*delta_r;  % Removed Cno
     % Moments
-    Moments = Cbs*Q*S*[b*Cl ; c*Cm ; b*Cn]; 
+    % TODO: Mx and Mz dont match, but the coefficients are correct. dont know
+    % whats going on
+    
+    Moments = Cbs*Q*S*[b*Cl; c*Cm; b*Cn];
     
 
 
