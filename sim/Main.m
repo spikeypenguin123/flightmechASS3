@@ -9,11 +9,12 @@ addpath('Visualiser');
 %% Configure
 
 CONFIG = {};
-CONFIG.debug = true; % bool
-CONFIG.flight_plan = 1; % 1->8
+CONFIG.debug = false; % bool
+CONFIG.flight_plan = 2; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 100; % 100, 180
-CONFIG.visualise = false; % bool
+CONFIG.visualise = true; % bool
+CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this
 CONFIG.t_step = 0.1;
@@ -26,7 +27,7 @@ aircraft = Initialisation(CONFIG.CG, CONFIG.V, CONFIG.debug);
 
 if CONFIG.visualise
     visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
-        aircraft.state.z_e, true, 1); 
+        aircraft.state.z_e, true, CONFIG.V/3); 
 end
 
 %% main loop
@@ -36,6 +37,7 @@ end
 
 dx_prev = zeros(13);
 
+% remove the below line once the Trim function is complete.
 aircraft.controls = aircraft.trim;
 
 for t = CONFIG.t
@@ -108,7 +110,8 @@ end
 
 %% plots and analysis
 
-% PlotData(aircraft.vectors);
-
+if CONFIG.plot
+    PlotData(aircraft.vectors, CONFIG.t);
+end
 
 
