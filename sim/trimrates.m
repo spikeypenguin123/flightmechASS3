@@ -7,7 +7,7 @@ function Xd = TrimRates(X,U,aircraft)
     % Intiialise the angular rates
     angularrates0 = [0,0];
     err = 1;
-    eps = 10^-9;
+    eps = 10^-8;
     n = 1;
     maxIter = 200;
     
