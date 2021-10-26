@@ -77,38 +77,29 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     betadot_hat = (angular_rates(2)*c)/(2*V);
 
     % Force Coefficients
-    CY = CYb*beta + CYbd*betadot_hat + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;  % Removed CYo
+    CY = CYb*beta + CYbd*beta_dot + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;  % Removed CYo
     [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates);
+
+    % Forces
+    CX_non = Cbs*[-CD;0;0];
+    CY_non = Cbs*[0;CY;0];
+    CZ_non = Cbs*[0;0;-CL];
     
-    % Need to check how to implement additional thrust term
-%     rho_SL = 1.225;
-%     sigma = rho/rho_SL;
-%     Pmax_SL = aircraft.prop.P_max; % Data from flight condition
-%     Pmax = Pmax_SL*(1.1324*sigma - 0.1324); % Max Power
-%     F_T = ((aircraft.prop.eta*Pmax)/V)*delta_T;
-%     C_dT = (F_T*c)/(2*V);     
-%     + [C_dT ; 0 ; 0]*delta_T
-    
-    % Forces 
-    F_coeff = Cbs*[-CD ; CY ; -CL];
-    F_Cx = F_coeff(1);
-    F_Cy = F_coeff(2);
-    F_Cz = F_coeff(3);
-    
-    Fx = Q*S*F_Cx;
-    Fy = Q*S*F_Cy;
-    Fz = Q*S*F_Cz;
-    
-    Forces = [Fx Fy Fz];
+    Fx = Q*S*CX_non;
+    Fy = Q*S*CY_non;
+    Fz = Q*S*CZ_non;
 
     % Calcualting moment coefficients
-    Cl = Clb*beta + Clbd*betadot_hat + Clr*rhat + Clp*phat + Clda*delta_a + Cldr*delta_r;  % Removed Clo
+    Cl = Clb*beta + Clbd*betadot_hat + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;  % Removed Clo
     Cm = Cm0 + Cma*alpha + Cmad*alphadot_hat + Cmq*qhat + Cmde*delta_e;
     Cn = Cnb*beta + Cnbd*betadot_hat + Cnr*rhat + Cnp*phat + Cnda*delta_a + Cndr*delta_r;  % Removed Cno
 
     % Moments
-    Moments = Cbs*Q*S*[b*Cl ; c*Cm ; b*Cn]; 
-    
+    L_moment = Cbs*Cl*Q*S*b;
+    M = Cbs*Cm*Q*S*c;
+    N = Cbs*Cn*Q*S*b;
 
+    Forces = [-Fx Fy Fz];
+    Moments = [L_moment M N]; 
 
 end

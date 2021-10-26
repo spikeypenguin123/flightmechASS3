@@ -32,7 +32,7 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-aircraft = Trim(aircraft);
+% aircraft = Trim(aircraft);
 
 dx_prev = zeros(13);
 

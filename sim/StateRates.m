@@ -54,13 +54,17 @@ function Xd = StateRates(aircraft, X, U, angular_rates)
     F_gy = F_G(2);
     F_gz = F_G(3);
 
-    udot = r*v - q*w - g*sin(theta) + (F_x + F_gx + F_T)/m;
-    vdot = -r*u + p*w + g*sin(phi)*cos(theta) + (F_y + F_gy)/m;
-    wdot = q*u - p*v + g*cos(phi)*cos(theta) + (F_z + F_gz)/m;
+%     udot = r*v - q*w - g*sin(theta) + (F_x + F_gx + F_T)/m;
+%     vdot = -r*u + p*w + g*sin(phi)*cos(theta) + (F_y + F_gy)/m;
+%     wdot = q*u - p*v + g*cos(phi)*cos(theta) + (F_z + F_gz)/m;
+    
+    udot = r*v - q*w + (F_x + F_gx + F_T)/m;
+    vdot = -r*u + p*w + (F_y + F_gy)/m;
+    wdot = q*u - p*v + (F_z + F_gz)/m;
 
 
     % Body rates time derivatives
-    C0 = Ixx/Izz - Ixz^2;
+    C0 = Ixx*Izz - Ixz^2;
     C1 = Izz/C0;
     C2 = Ixz/C0;
     C3 = C2*(Ixx - Iyy + Izz);
