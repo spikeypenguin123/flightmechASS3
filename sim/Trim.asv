@@ -126,32 +126,32 @@ function aircraft = Trim(aircraft)
         X_back(1) = V*cos(alphaPert_back);            % u: x-vel update
         X_back(3) = V*sin(alphaPert_back);            % w: z-vel update
         Xd_back = TrimRates(X_back,U,aircraft);       % Update state rates 
-        J(:,1) = (Xd_forw - Xd_back)./(2.*delta);   % Jacobian for alpha dependance
-
-        U_forw = U;
-        U_back = U;
-        % Perturb throttle Forewards
-        U_forw(1) = xbar0(2) + delta;
-        Xd_forw = TrimRates(X,U_forw,aircraft);         % Update state rates 
-        % Perturb throttle Backwards
-        U_back(1) = xbar0(2) - delta;
-        Xd_back = TrimRates(X,U_back,aircraft);         % Update state rates 
-        J(:,2) = (Xd_forw - Xd_back)./(2.*delta);       % Jacobian for alpha dependance
-
-        % Perturb elevator
-        U(2) = xbar0(3) + delta;
-        Xd = TrimRates(X,U,aircraft);       % Update state rates 
-        J(:,3) = (Xd - Xd0)./(2.*delta);   % Jacobian for elevator dependance
         
+        % udot (1), wdot (2), qdot (q2e(X(7:10)(2))) should all be zero at steady level flight
+        pqrdot_forw = q2e(Xd_forw(7:10));
+        pqrdot_back = q2e(Xd_back(7:10));
+        Xd_forwJ = [Xd_forw(1);Xd_forw(3);pqrdot_forw(2)];
+        Xd_backJ = [Xd_back(1);Xd_back(3);pqrdot_back(2)];
+
+        J(:,1) = (Xd_forwJ - Xd_backJ)./(2.*delta);   % Jacobian for alpha dependance
+
+        %% Perturb throttle
         U_forw = U;
         U_back = U;
-        % Perturb throttle Forewards
-        U_forw(2) = xbar0(3) + delta;
+        U_forw(1) = xbar0(2) + delta;                   % Perturb throttle Forewards
         Xd_forw = TrimRates(X,U_forw,aircraft);         % Update state rates 
-        % Perturb throttle Backwards
-        U_back(1) = xbar0(2) - delta;
+        U_back(1) = xbar0(2) - delta;                   % Perturb throttle Backwards
         Xd_back = TrimRates(X,U_back,aircraft);         % Update state rates 
-        J(:,3) = (Xd_forw - Xd_back)./(2.*delta);       % Jacobian for alpha dependance
+        J(:,2) = (Xd_forw - Xd_back)./(2.*delta);       % Jacobian for throttle dependance
+
+        %% Perturb Elevator
+        U_forw = U;
+        U_back = U;
+        U_forw(2) = xbar0(3) + delta;                   % Perturb elevator Forewards
+        Xd_forw = TrimRates(X,U_forw,aircraft);         % Update state rates 
+        U_back(2) = xbar0(3) - delta;                   % Perturb elevator Backwards
+        Xd_back = TrimRates(X,U_back,aircraft);         % Update state rates 
+        J(:,3) = (Xd_forw - Xd_back)./(2.*delta);       % Jacobian for elevator dependance
         
         % Newton-Ralphson Solver: Calculate next trim (xbar) values
         xbar = xbar0 - J\fX;
@@ -159,9 +159,7 @@ function aircraft = Trim(aircraft)
         % Calculate error
         err = abs((xbar - xbar0)./delta);
         xbar0 = xbar;   % Update xbar for next loop
-        
-        
-        
+                
         % Update Control (U0) Vector
         U0(1) = xbar0(2);   % Updated perturbed throttle --> save to Control U0
         U0(2) = xbar0(3);   % Updated perturbed elevator --> save to Control U0
