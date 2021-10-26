@@ -7,9 +7,9 @@ function Xd = TrimRates(X,U,aircraft)
     % Intiialise the angular rates
     angularrates0 = [0,0];
     err = 1;
-    eps = 10^-8;
+    eps = 10^-5;
     n = 1;
-    maxIter = 200;
+    maxIter = 100;
     
     Xd = zeros(13,1);   % Initialise xdot for speed (alphadot and betadot)
 
