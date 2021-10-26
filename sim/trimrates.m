@@ -1,11 +1,11 @@
-function Xd = trimrates(X,U,aircraft)
+function Xd = TrimRates(X,U,aircraft)
     % Calculate the state rates for the Trim.m function
     % X: Current State Vector
     % U: Control Vector
     % Data: Flight Data
     
     % Intiialise the angular rates
-    AngularRates0 = [0,0];
+    angularrates0 = [0,0];
     err = 1;
     eps = 10^-9;
     n = 1;
@@ -16,16 +16,16 @@ function Xd = trimrates(X,U,aircraft)
     while eps < err && n < maxIter
         
         % Estimate State Rate
-        Xd = StateRates(aircraft, X, U, angular_rates);
+        Xd = StateRates(aircraft, X, U, angularrates0);
 
         % Recalculate Angular rates
-        AngularRatesNext = AngularRates(X,Xd);
+        angularratesnext = AngularRates(X,Xd);
         
         % Error Calculation prior to saving
-        err = max(abs((AngularRatesNext - AngularRates0)./AngularRates0));
+        err = max(abs((angularratesnext - angularrates0)./angularrates0));
         
         % Save to the old Anglular rate variables
-        AngularRates0 = AngularRatesNext;
+        angularrates0 = angularratesnext;
         
         if n >= maxIter
            error("Max Iteration in Trim Rates"); 
