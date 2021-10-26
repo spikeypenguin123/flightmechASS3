@@ -78,7 +78,7 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     betadot_hat = (angular_rates(2)*c)/(2*V);
 
     % Force Coefficients
-    CY = CYb*beta + CYbd*betadot_hat + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;  % Removed CYo
+    CY = CYb*beta + CYbd*betadot_hat + CYr*rhat + CYp*phat + CYda*delta_a + CYdr*delta_r;
     [CL,CD] = WindForces(aircraft,X,U,alpha,V,angular_rates);
     
     % Need to check how to implement additional thrust term
@@ -107,10 +107,9 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
 
     
     % Calcualting moment coefficients
-    Cl = Clb*beta + Clbd*betadot_hat + Clr*rhat + Clp*phat + Clda*delta_a + Cldr*delta_r;  % Removed Clo
+    Cl = Clb*beta + Clbd*betadot_hat + Clr*rhat + Clp*phat + Clda*delta_a + Cldr*delta_r;  
     Cm = Cm0 + Cma*alpha + Cmad*alphadot_hat + Cmq*qhat + Cmde*delta_e;
     Cn = Cnb*beta + Cnbd*betadot_hat + Cnr*rhat + Cnp*phat + Cnda*delta_a + Cndr*delta_r;  % Removed Cno
-    
     % Moments
     % TODO: Mx and Mz dont match, but the coefficients are correct. dont know
     % whats going on
