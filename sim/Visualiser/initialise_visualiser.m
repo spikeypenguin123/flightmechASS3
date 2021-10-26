@@ -34,7 +34,7 @@ function visualiser = initialise_visualiser(x,y,z,show_displacement,velocity)
     grid on
     axis equal
     light;
-    set(gca,'XTick',[], 'YTick', [], 'ZTick', [])
+    % set(gca,'XTick',[], 'YTick', [], 'ZTick', [])
 %     xlim([-1000,1000]);
 %     ylim([-1000,1000]);
 %     zlim([-1000,1000]);
@@ -44,7 +44,7 @@ function visualiser = initialise_visualiser(x,y,z,show_displacement,velocity)
     visualiser.anim = anim;
     visualiser.vehicle = Vi;
     visualiser.F = F;
-    visualiser.x_0 = [x y z];
+    visualiser.x_0 = [x y -z];
     visualiser.trace = [animatedline animatedline animatedline];
     visualiser.show_displacement = show_displacement;
     
