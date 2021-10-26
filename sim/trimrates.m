@@ -1,4 +1,4 @@
-function [Xd,CL,Fy] = TrimRates(X,U,aircraft)
+function Xd = trimrates(X,U,aircraft)
     % Calculate the state rates for the Trim.m function
     % X: Current State Vector
     % U: Control Vector
@@ -16,7 +16,7 @@ function [Xd,CL,Fy] = TrimRates(X,U,aircraft)
     while eps < err && n < maxIter
         
         % Estimate State Rate
-        Xd = StateRates(aircraft,AngularRates0);
+        Xd = StateRates(aircraft, X, U, angular_rates);
 
         % Recalculate Angular rates
         AngularRatesNext = AngularRates(X,Xd);

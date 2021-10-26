@@ -72,7 +72,7 @@ function aircraft = Trim(aircraft)
         X0(7:10) = X0(7:10)/norm(X0(7:10));
         
         % State Rate Vector
-        Xd0 = TrimRates(X0,U0,aircraft);
+        Xd0 = trimrates(X0,U0,aircraft);
 
         % Non-linear Function f(x) = [alphaDot;ThrotDot;ElevDot]
         fX = [Xd0(1);Xd0(3);Xd0(5)];
