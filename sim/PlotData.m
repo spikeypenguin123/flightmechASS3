@@ -1,5 +1,8 @@
 function PlotData(vectors,t)
+    
+    % altitude
     figure
-    plot(t,vectors(11:));
+    plot(t,vectors.state(13,:));
+    
 end
 

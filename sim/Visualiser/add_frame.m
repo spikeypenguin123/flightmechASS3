@@ -10,11 +10,11 @@ function vis = add_frame(vis, x, y, z, phi, theta, psi, t)
         delete(vis.VEHICLE);   % remove vehicle
     end
     
-    Cbv = Cx(pi+phi)*Cy(-theta)*Cz(psi);
+    Cbv = Cx(-pi-phi)*Cy(-theta)*Cz(psi);
     Vnew=vis.vehicle*Cbv;
     
     if vis.show_displacement
-        delta_x = ([x y z]-vis.x_0)./vis.velocity_factor;
+        delta_x = ([x y -z]-vis.x_0)./vis.velocity_factor;
     else
         delta_x = [0 0 0];
     end
