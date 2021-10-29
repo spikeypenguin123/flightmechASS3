@@ -14,11 +14,11 @@ Control_GUI
 %% Configure
 
 CONFIG = {};
-CONFIG.debug = false; % bool
+CONFIG.debug = true; % bool
 CONFIG.flight_plan = 3; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 100; % 100, 180
-CONFIG.visualise = true; % bool
+CONFIG.visualise = false; % bool
 CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this

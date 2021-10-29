@@ -114,7 +114,7 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     % TODO: Mx and Mz dont match, but the coefficients are correct. dont know
     % whats going on
     
-    Moments = Cbs*Q*S*[b*Cl; c*Cm; b*Cn];
+    Moments = Q*S*[b*Cl; c*Cm; b*Cn];
     
 
 
