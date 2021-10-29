@@ -5,6 +5,11 @@ clc
 addpath('Aircraft');
 addpath('AircraftData');
 addpath('Visualiser');
+addpath('Control_GUI');
+
+% Run the control GUI
+Control_GUI
+
 
 %% Configure
 
@@ -33,7 +38,7 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-aircraft = Trim(aircraft);
+% aircraft = Trim(aircraft);
 
 dx_prev = zeros(13);
 
