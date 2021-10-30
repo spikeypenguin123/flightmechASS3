@@ -8,22 +8,22 @@ addpath('Visualiser');
 addpath('Control_GUI');
 
 % Run the control GUI
-Control_GUI
+% Control_GUI
 
 
 %% Configure
 
 CONFIG = {};
-CONFIG.debug = true; % bool
+CONFIG.debug = false; % bool
 CONFIG.flight_plan = 3; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 100; % 100, 180
-CONFIG.visualise = false; % bool
+CONFIG.visualise = true; % bool
 CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this
 CONFIG.t_step = 0.1;
-CONFIG.t_end = 30;
+CONFIG.t_end = 10;
 CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 
 %% Inititalise
