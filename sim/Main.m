@@ -6,6 +6,7 @@ addpath('Aircraft');
 addpath('AircraftData');
 addpath('Visualiser');
 addpath('Control_GUI');
+addpath('Controls');
 
 % Run the control GUI
 % Control_GUI
@@ -15,11 +16,11 @@ addpath('Control_GUI');
 
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 3; % 1->8
-CONFIG.CG = "CG1"; % CG1, CG2
-CONFIG.V = 100; % 100, 180
+CONFIG.flight_plan = 8; % 1->8
+CONFIG.CG = "CG2"; % CG1, CG2
+CONFIG.V = 180; % 100, 180
 CONFIG.visualise = true; % bool
-CONFIG.plot = true; % bool
+CONFIG.plot = false; % bool
 
 CONFIG.t_start = 0; % don't change this
 CONFIG.t_step = 0.1;
@@ -49,10 +50,11 @@ aircraft.controls = aircraft.trim;
 [~, control_vec, ~] = get_vectors(aircraft);
 aircraft.controls.vector = control_vec;
 
+i = 1;
 for t = CONFIG.t
     [aircraft.controls.delta_T, aircraft.controls.delta_e, ...
         aircraft.controls.delta_a, aircraft.controls.delta_r]...
-            = Controls(CONFIG.flight_plan, t, aircraft.trim.delta_T,...
+            = Controls(CONFIG.flight_plan, t, i, aircraft.trim.delta_T,...
             aircraft.trim.delta_e, aircraft.trim.delta_a, aircraft.trim.delta_r);
 
     %% get required data (gravity, wind, flow etc)
@@ -113,6 +115,8 @@ for t = CONFIG.t
     if t~=0
         aircraft = save_vectors(aircraft);
     end
+    
+    i=i+1;
 end
 
 if CONFIG.visualise
@@ -124,5 +128,7 @@ end
 if CONFIG.plot
     PlotData(aircraft.vectors, CONFIG.t);
 end
+
+var(aircraft.vectors.state(2,:))+var(aircraft.vectors.state(3,:))
 
 
