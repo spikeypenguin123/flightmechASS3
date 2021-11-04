@@ -15,7 +15,7 @@ Control_GUI
 % the frequency for the filtered U0 can be a discussion point in the report
 
 % U_linear for the first 3
-% U_linear for the maneurvers 4-8 (dutch roll and spiral mode are exciting)
+% U_smoothed for the maneurvers 4-8 (dutch roll and spiral mode are exciting)
 
 
 %% Part C Task 1c is using the U_linear
