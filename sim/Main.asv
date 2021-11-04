@@ -9,7 +9,7 @@ addpath('Control_GUI');
 addpath('Controls');
 
 % Run the control GUI
-% Control_GUI
+Control_GUI
 
 
 %% Configure

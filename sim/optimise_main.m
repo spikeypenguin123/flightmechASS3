@@ -1,4 +1,69 @@
+blah()
+function blah()
+% STATE = [91.5792078246906;-2.02668477641255;-2.28005080496474;-1.05684241158796;0.0497374287696083;0.130153326639134;0.909124529486464;0.413625185871887;-0.0483397898983037;0.00899874930796433;467.871658324774;-5.42332106879390;-308.358752511102];
+
+addpath('Aircraft');
+addpath('AircraftData');
+% addpath('Visualiser');
+% addpath('Control_GUI');
+
+% Run the control GUI
+% Control_GUI
+
+
+%% Configure
+
+CONFIG = {};
+CONFIG.debug = false; % bool
+CONFIG.flight_plan = 82; % 1->8
+CONFIG.CG = "CG2"; % CG1, CG2
+CONFIG.V = 180; % 100, 180
+CONFIG.visualise = false; % bool
+CONFIG.plot = false; % bool
+
+CONFIG.t_start = 0; % don't change this
+CONFIG.t_step = 0.1;
+CONFIG.t_end = 5;
+CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
+
+%% Inititalise
+
+aircraft = Initialisation(CONFIG.CG, CONFIG.V, CONFIG.debug);
+
+% aircraft = Initialisation_With_State(CONFIG.CG, CONFIG.V, CONFIG.debug, STATE);
+blank_aircraft = aircraft;
+
+if CONFIG.visualise
+    visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
+        aircraft.state.z_e, true, CONFIG.V/3); 
+end
+
+x0 = zeros(4,51);
+
+
+% %% Start with the default options
+% options = optimset;
+% %% Modify options setting
+% options = optimset(options,'Display', 'off');
+% options = optimset(options,'Display', 'iter');
+% options = optimset(options,'PlotFcns', { @optimplotfval });
+% [x,fval,exitflag,output] = ...
+% fminsearch(@optimise_controls,x0,options);
+
+% Start with the default options
+options = optimoptions('fminunc');
+% Modify options setting
+options = optimoptions(options,'Display', 'iter-detailed');
+options = optimoptions(options,'MaxIterations', 99);
+options = optimoptions(options,'PlotFcn', { @optimplotfval });
+options = optimoptions(options,'Algorithm', 'quasi-newton');
+[x,~,~,~,~,~] = ...
+fminunc(@optimise_controls,x0,options);
+
+save x
+
 function dx = optimise_controls(controls)
+    save controls
 % 
 % %     STATE = [91.5792078246906;-2.02668477641255;-2.28005080496474;-1.05684241158796;0.0497374287696083;0.130153326639134;0.909124529486464;0.413625185871887;-0.0483397898983037;0.00899874930796433;467.871658324774;-5.42332106879390;-308.358752511102];
 % 
@@ -40,7 +105,9 @@ function dx = optimise_controls(controls)
 
     % TODO: trim the aircraft
     % aircraft = Trim(aircraft);
-
+    
+    aircraft = blank_aircraft;
+    
     dx_prev = zeros(13);
 
     % remove the below line once the Trim function is complete.
@@ -51,7 +118,7 @@ function dx = optimise_controls(controls)
     aircraft.controls.vector = control_vec;
 
     score = 0;
-    
+
     i = 1;
     for t = CONFIG.t
         c = controls(:,i);
@@ -66,8 +133,8 @@ function dx = optimise_controls(controls)
             aircraft.controls.delta_a = bound(c(3) + aircraft.trim.delta_a, aircraft.control_limits.Lower(3),aircraft.control_limits.Upper(3));
             aircraft.controls.delta_r = bound(c(4) + aircraft.trim.delta_r, aircraft.control_limits.Lower(4),aircraft.control_limits.Upper(4));
         end
-        
-        
+
+
         %% get required data (gravity, wind, flow etc)
     %     AngularRates = AngularRates(aircraft.vectors.state,Xd);
     %     [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,aircraft.vectors.state,aircraft.vectors.control,AngularRates); 
@@ -123,13 +190,16 @@ function dx = optimise_controls(controls)
         end
 
         % save the aircraft state as a point in time, for plots and analysis
-        if t~=0
-            aircraft = save_vectors(aircraft);
-        end
-        
+%         if t~=0
+%             aircraft = save_vectors(aircraft);
+%         end
+
         i = i + 1;
-        
+
+        % add a 'score' for this point
+        % this takes a lot of fiddling.
         if CONFIG.flight_plan == 7
+            % move the required angle around
             if t <= 5
                 a = pi/2;
             elseif t <= 10
@@ -139,7 +209,9 @@ function dx = optimise_controls(controls)
             else
                 a = 0;
             end   
-            score = score + abs(a-aircraft.attitude.phi)*10+abs(aircraft.state.y_e)+abs(aircraft.state.z_e-304.8);
+            score = score + abs(angdiff(a,aircraft.attitude.phi))*2000+abs(aircraft.state.y_e)+abs(aircraft.state.z_e-304.8);
+        elseif CONFIG.flight_plan == 82
+            score = score + abs(angdiff(0,aircraft.attitude.phi))*10+abs(aircraft.state.y_e)+abs(aircraft.state.z_e-304.8);
         end
     end
 
@@ -152,21 +224,14 @@ function dx = optimise_controls(controls)
     if CONFIG.plot
         PlotData(aircraft.vectors, CONFIG.t);
     end
-    
+
+    % vectorised score for aileron roll
     if CONFIG.flight_plan == 81
         % keep y, z at zero
         dx = sum(abs(aircraft.vectors.state(12,1)-aircraft.vectors.state(12,12:end)))+sum(abs(aircraft.vectors.state(13,1)-aircraft.vectors.state(13,13:end)));
-    end
-    if CONFIG.flight_plan == 82
-        a = q2e(aircraft.vectors.state(7:10,:));
-        % get phi, y, z to zero
-        dx = sum(abs(a(1,:)))*10 ...
-            +sum(abs(aircraft.vectors.state(12,:)))...
-            +sum(abs(-305-aircraft.vectors.state(13,13:end)));
-    end
-    if CONFIG.flight_plan == 7
+    else
         dx = score;
     end
-    
-end
 
+end
+end

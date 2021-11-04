@@ -21,19 +21,26 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
             if t >= 1 && t <= 1.5
                 delta_r = deg2rad(5)+delta_r;
             end
+        case 7
+%             load('DelayedRoll.mat');
+%             c = controls(:,i);
+%             delta_T = c(1)+delta_T;
+%             delta_e = c(2)+delta_e;
+%             delta_a = c(3)+delta_a;
+%             delta_r = c(4)+delta_r;
         case 8
-            if t <= 5.5
+            if t <= 5
                 load('BarrelRollStage1.mat');
                 c = optimresults.x(:,i);
                 delta_T = c(1)+delta_T;
                 delta_e = c(2)+delta_e;
                 delta_a = deg2rad(7.5)+delta_a;
                 delta_r = c(4)+delta_r;
-            else
+%             else
 %                 load('BarrelRollStage2.mat');
-%                 c = optimresults.x(:,i-50);
-                 % delta_T = 0.1+delta_T;
-                delta_e = -0.001+delta_e;
+%                 c = controls(:,i-50);
+%                 delta_T = c(1)+delta_T;
+%                 delta_e = c(2)+delta_e;
 %                 delta_a = c(3)+delta_a;
 %                 delta_r = c(4)+delta_r;
             end
