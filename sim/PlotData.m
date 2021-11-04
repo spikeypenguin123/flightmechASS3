@@ -95,9 +95,9 @@ function PlotData(vectors,t)
     grid minor
     title('y_{e}','FontName','Latex');
     subplot(3,1,3)
-    plot(t,X(13,:),'k-','LineWidth',2);
+    plot(t,-X(13,:),'k-','LineWidth',2);
     grid minor
-    title('z_{e}','FontName','Latex');
+    title('Altitudem (-z_{e})','FontName','Latex');
     han=axes(fig5,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
