@@ -5,15 +5,18 @@ function PlotData(vectors,t)
     posy = 50;
     lenx = 800;
     leny = 400;
-    figsize1 = [posx posy+leny*1.25 lenx leny];
+    figsize1 = [posx posy+leny*1.25 lenx leny*1.5];
     figsize2 = [posx+lenx posy+leny*1.25 lenx leny];
     figsize3 = [posx posy lenx leny];
     figsize4 = [posx+lenx posy lenx leny];
-    figsize5 = [posx posy 400, 400];
+    figsize5 = [posx posy lenx, leny];
     
     % Extract Data 
     X = vectors.state;
     U = vectors.control;
+    
+    % Calculate the velocity
+    V = sqrt(X(1,:).^2 + X(2,:).^2 + X(3,:).^2);
     
     % x,y,z position
 %     plot(t,vectors.state(13,:));
@@ -21,18 +24,22 @@ function PlotData(vectors,t)
     % Plot velocity (uvw)
     figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize1)
     fig2 = figure(2);
-    subplot(3,1,1)
+    subplot(4,1,1)
     plot(t,X(1,:),'k-','LineWidth',2);
     grid minor
     title('u','Interpreter','Latex');
-    subplot(3,1,2)
+    subplot(4,1,2)
     plot(t,X(2,:),'k-','LineWidth',2);
     grid minor
     title('v','Interpreter','Latex');
-    subplot(3,1,3)
+    subplot(4,1,3)
     plot(t,X(3,:),'k-','LineWidth',2);
     grid minor
     title('w','Interpreter','Latex');
+    subplot(4,1,4)
+    plot(t,V,'k-','LineWidth',2);
+    grid minor
+    title('V','Interpreter','Latex');
     han=axes(fig2,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
@@ -97,7 +104,7 @@ function PlotData(vectors,t)
     subplot(3,1,3)
     plot(t,-X(13,:),'k-','LineWidth',2);
     grid minor
-    title('Altitudem (-z_{e})','FontName','Latex');
+    title('Altitude (-z_{e})','FontName','Latex');
     han=axes(fig5,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
