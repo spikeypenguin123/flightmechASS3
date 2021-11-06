@@ -10,17 +10,7 @@ addpath('Controls');
 
 % Run the control GUI
 Control_GUI
-% Use the provided trim U0 in the GUI and save this
-% Will be loaded everytime you want to run that particular sim
 
-% the frequency for the filtered U0 can be a discussion point in the report
-
-% U_linear for the first 3
-% U_smoothed for the maneurvers 4-8 (dutch roll and spiral mode are exciting)
-
-
-%% Part C Task 1c is using the U_linear
-    % could also use the U_filter and compare for discussion
 
 %% Configure
 
