@@ -26,7 +26,7 @@ Control_GUI
 CONFIG = {};
 CONFIG.debug = false; % bool
 CONFIG.flight_plan = 3; % 1->8
-CONFIG.CG = "CG1"; % CG1, CG2
+CONFIG.CG = "CG2"; % CG1, CG2
 CONFIG.V = 100; % 100, 180
 CONFIG.visualise = true; % bool
 CONFIG.plot = true; % bool
