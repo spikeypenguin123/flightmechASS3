@@ -27,15 +27,15 @@ function PlotData(vectors,t)
     subplot(4,1,1)
     plot(t,X(1,:),'k-','LineWidth',2);
     grid minor
-    title('u','Interpreter','Latex');
+    title('u','Fontname','Latex');
     subplot(4,1,2)
     plot(t,X(2,:),'k-','LineWidth',2);
     grid minor
-    title('v','Interpreter','Latex');
+    title('v','Fontname','Latex');
     subplot(4,1,3)
     plot(t,X(3,:),'k-','LineWidth',2);
     grid minor
-    title('w','Interpreter','Latex');
+    title('w','Fontname','Latex');
     subplot(4,1,4)
     plot(t,V,'k-','LineWidth',2);
     grid minor
@@ -52,15 +52,15 @@ function PlotData(vectors,t)
     subplot(3,1,1)
     plot(t,rad2deg(X(4,:)),'k-','LineWidth',2);
     grid minor
-    title('p','Interpreter','Latex');
+    title('p','Fontname','Latex');
     subplot(3,1,2)
     plot(t,rad2deg(X(5,:)),'k-','LineWidth',2);
     grid minor
-    title('q','Interpreter','Latex');
+    title('q','Fontname','Latex');
     subplot(3,1,3)
     plot(t,rad2deg(X(6,:)),'k-','LineWidth',2);
     grid minor
-    title('r','Interpreter','Latex');
+    title('r','Fontname','Latex');
     han=axes(fig3,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
