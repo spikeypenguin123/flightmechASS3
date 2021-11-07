@@ -9,7 +9,7 @@ addpath('Control_GUI');
 addpath('Controls');
 
 % Run the control GUI
-Control_GUI
+% Control_GUI
 % Use the provided trim U0 in the GUI and save this
 % Will be loaded everytime you want to run that particular sim
 
@@ -26,15 +26,15 @@ Control_GUI
 
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 3; % 1->8
+CONFIG.flight_plan = 4; % 1->8
 CONFIG.CG = "CG2"; % CG1, CG2
 CONFIG.V = 180; % 100, 180
 CONFIG.visualise = true; % bool
-CONFIG.plot = false; % bool
+CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this
 CONFIG.t_step = 0.1;
-CONFIG.t_end = 10;
+CONFIG.t_end = 20;
 CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 
 %% Inititalise
@@ -43,7 +43,7 @@ aircraft = Initialisation(CONFIG.CG, CONFIG.V, CONFIG.debug);
 
 if CONFIG.visualise
     visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
-        aircraft.state.z_e, true, CONFIG.V/3); 
+        aircraft.state.z_e, true, 1); 
 end
 
 %% main loop
@@ -66,20 +66,6 @@ for t = CONFIG.t
         aircraft.controls.delta_a, aircraft.controls.delta_r]...
             = Controls(CONFIG.flight_plan, t, i, aircraft.trim.delta_T,...
             aircraft.trim.delta_e, aircraft.trim.delta_a, aircraft.trim.delta_r);
-
-    %% get required data (gravity, wind, flow etc)
-%     AngularRates = AngularRates(aircraft.vectors.state,Xd);
-%     [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,aircraft.vectors.state,aircraft.vectors.control,AngularRates); 
-    % get velocity magnitude
-%     V = sqrt(aircraft.state.u^2+aircraft.state.v^2+aircraft.state.w^2);
-%     
-%     [rho, Q] = FlowProperties(aircraft,V);
-%   
-%     G_body = Gravity(aircraft.inertial.g, aircraft.state.quat, aircraft.inertial.m);
-%     
-%     [CL,CD] = WindForces(aircraft,X,U,alpha,V,AngularRates);
-%     
-%     [Pmax, T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
         
     %% alter the aircraft state here (do fancy calculations and integrations):
     
@@ -105,8 +91,6 @@ for t = CONFIG.t
     aircraft.attitude.phi = ea(1);
     aircraft.attitude.theta = ea(2);
     aircraft.attitude.psi = ea(3);
-    
-    disp(rad2deg(ea));
         
     if CONFIG.visualise
         visualiser = add_frame(visualiser, aircraft.state.x_e, ...
@@ -127,8 +111,7 @@ for t = CONFIG.t
     if t~=0
         aircraft = save_vectors(aircraft);
     end
-    
-    angdiff(aircraft.attitude.phi,pi/2)
+
     
     i=i+1;
 

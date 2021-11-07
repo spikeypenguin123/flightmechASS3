@@ -140,6 +140,15 @@ function PlotData(vectors,t)
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('\delta_{r}, (deg)','FontName','Latex');
    
+    
+    % plot vertical g-force
+    figure('DefaultAxesFontSize',16,'Renderer', 'painters')
+    fig7 = figure(7);
+    plot(t, X(5,:).*X(1,:)/9.81 + 1, 'k-', 'LineWidth',2);
+    grid minor
+    title('Vertical G-Force','FontName','Latex');
+    xlabel('Time, (s)','Interpreter','Latex');
+    ylabel('G-Force','FontName','Latex');
     % Save Figures to a folder
 %     if saveMode
 %         

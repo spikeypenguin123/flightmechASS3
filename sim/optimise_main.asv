@@ -4,7 +4,6 @@ function blah()
 
 addpath('Aircraft');
 addpath('AircraftData');
-addpath('Controls');
 % addpath('Visualiser');
 % addpath('Control_GUI');
 
@@ -24,7 +23,7 @@ CONFIG.plot = false; % bool
 
 CONFIG.t_start = 0; % don't change this
 CONFIG.t_step = 0.1;
-CONFIG.t_end = 20;
+CONFIG.t_end = 10;
 CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 
 %% Inititalise
@@ -39,8 +38,7 @@ if CONFIG.visualise
         aircraft.state.z_e, true, CONFIG.V/3); 
 end
 
-controls = load('controls.mat');
-x0 = controls.controls;
+x0 = 0;
 
 
 % %% Start with the default options
@@ -123,14 +121,14 @@ function dx = optimise_controls(controls)
 
     i = 1;
     for t = CONFIG.t
-        c = controls(:,i);
+        % c = controls(:,i);
         if CONFIG.flight_plan == 81
             aircraft.controls.delta_T = bound(c(1) + aircraft.trim.delta_T, aircraft.control_limits.Lower(1),aircraft.control_limits.Upper(1));
             aircraft.controls.delta_e = bound(c(2) + aircraft.trim.delta_e, aircraft.control_limits.Lower(2),aircraft.control_limits.Upper(2));
             aircraft.controls.delta_a = deg2rad(7.5) + aircraft.trim.delta_a;
             aircraft.controls.delta_r = bound(c(4) + aircraft.trim.delta_r, aircraft.control_limits.Lower(4),aircraft.control_limits.Upper(4));
         elseif CONFIG.flight_plan == 4
-            aircraft.controls.delta_e = bound(c(1) + aircraft.trim.delta_e, aircraft.control_limits.Lower(2),aircraft.control_limits.Upper(2));
+            aircraft.controls.delta_e = bound(c + aircraft.trim.delta_e, aircraft.control_limits.Lower(2),aircraft.control_limits.Upper(2));
         else 
             aircraft.controls.delta_T = bound(c(1) + aircraft.trim.delta_T, aircraft.control_limits.Lower(1),aircraft.control_limits.Upper(1));
             aircraft.controls.delta_e = bound(c(2) + aircraft.trim.delta_e, aircraft.control_limits.Lower(2),aircraft.control_limits.Upper(2));
