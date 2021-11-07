@@ -7,7 +7,7 @@ function Xd = TrimRates(X,U,aircraft)
     % Intiialise the angular rates
     angularrates0 = [0,0];
     err = 1;
-    eps = 10^-5;
+    eps = 10^-8;
     n = 1;
     maxIter = 100;
     
@@ -22,13 +22,13 @@ function Xd = TrimRates(X,U,aircraft)
         angularratesnext = AngularRates(X,Xd);
         
         % Error Calculation prior to saving
-        err = max(abs((angularratesnext - angularrates0)./angularrates0));
+        err = max(abs((angularratesnext - angularrates0)./angularrates0))
         
         % Save to the old Anglular rate variables
         angularrates0 = angularratesnext;
         
         if n >= maxIter
-           error("Max Iteration in Trim Rates"); 
+           disp("Max Iteration in Trim Rates"); 
         end
         
         n = n + 1; % increase the counter 
