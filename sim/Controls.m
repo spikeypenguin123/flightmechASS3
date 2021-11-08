@@ -27,6 +27,22 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
                 c = controls(:,i);
                 delta_e = c(1) + delta_e;
             end
+        case 6
+            load('Controls.mat');
+            c = controls(:,i);
+            delta_T = c(1)+delta_T;
+            delta_e = c(2)+delta_e;
+            delta_a = c(3)+delta_a;
+            delta_r = c(4)+delta_r;
+        case 7
+            load('DelayedRoll.mat');
+            
+            c = deg2rad(U_filter(:,i));
+            
+            delta_T = c(1)+delta_T;
+            delta_e = c(2)+delta_e;
+            delta_a = c(3)+delta_a;
+            delta_r = c(4)+delta_r;
         case 8
             if t <= 5
                 load('BarrelRollStage1.mat');

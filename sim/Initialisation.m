@@ -3,7 +3,7 @@ function [aircraft] = Initialisation(cg,speed,debug)
     % cg (string): [CG1|CG2]
     % speed (int): [100|180] Knots, true air speed
 
-    load AircraftData;
+    % load AircraftData;
     
     if cg == "CG1"
         cg = "nominalCG1";

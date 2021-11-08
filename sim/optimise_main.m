@@ -1,5 +1,8 @@
 blah()
 function blah()
+clear
+close all
+clc
 % STATE = [91.5792078246906;-2.02668477641255;-2.28005080496474;-1.05684241158796;0.0497374287696083;0.130153326639134;0.909124529486464;0.413625185871887;-0.0483397898983037;0.00899874930796433;467.871658324774;-5.42332106879390;-308.358752511102];
 
 addpath('Aircraft');
@@ -39,8 +42,8 @@ if CONFIG.visualise
         aircraft.state.z_e, true, CONFIG.V/3); 
 end
 
-controls = load('controls.mat');
-x0 = controls.controls;
+% controls = load('Loop.mat');
+x0 = [-0.1+zeros(1,201); zeros(1,201)];
 
 
 % %% Start with the default options
@@ -131,6 +134,7 @@ function dx = optimise_controls(controls)
             aircraft.controls.delta_r = bound(c(4) + aircraft.trim.delta_r, aircraft.control_limits.Lower(4),aircraft.control_limits.Upper(4));
         elseif CONFIG.flight_plan == 4
             aircraft.controls.delta_e = bound(c(1) + aircraft.trim.delta_e, aircraft.control_limits.Lower(2),aircraft.control_limits.Upper(2));
+            aircraft.controls.delta_T = bound(c(2) + aircraft.trim.delta_T, aircraft.control_limits.Lower(1),aircraft.control_limits.Upper(1));
         else 
             aircraft.controls.delta_T = bound(c(1) + aircraft.trim.delta_T, aircraft.control_limits.Lower(1),aircraft.control_limits.Upper(1));
             aircraft.controls.delta_e = bound(c(2) + aircraft.trim.delta_e, aircraft.control_limits.Lower(2),aircraft.control_limits.Upper(2));
@@ -219,6 +223,9 @@ function dx = optimise_controls(controls)
         elseif CONFIG.flight_plan == 4
             nz = aircraft.state.q*aircraft.state.u/9.81+1;
             score = score + abs(nz-3.5);
+        elseif CONFIG.flight_plan == 6
+            [~, beta] = AeroAngles(X);
+            score = score + abs(angdiff(beta,deg2rad(5)))*5+abs(angdiff(aircraft.attitude.psi,deg2rad(-5)))*5+abs(aircraft.state.y_e)+abs(aircraft.state.z_e-304.8);
         end
     end
 
