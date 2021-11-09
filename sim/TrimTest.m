@@ -120,16 +120,16 @@ function aircraft = TrimTest(aircraft)
         U0(2) = x_bar(3);
         
         % Check if exceeding control limits
-        if any(U0 > control_max) || any(U0 < control_min)
-            
-            % Return error for exceeding control limit
-            error('Exceeding control limits')
-        end
+%         if any(U0 > control_max) || any(U0 < control_min)
+%             
+%             % Return error for exceeding control limit
+%             error('Exceeding control limits')
+%         end
         
         % Incriment iteration count
         iterCount = iterCount + 1;
     end
       
     % Set the Trimmed State and Control to the aircraft struct
-    aircraft = PushState(X_trimmed,U_trimmed,aircraft);
+    aircraft = PushState(X0,U0,aircraft);
 end
