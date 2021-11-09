@@ -28,7 +28,7 @@ CONFIG = {};
 CONFIG.debug = false; % bool
 CONFIG.flight_plan = 4; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
-CONFIG.V = 180; % 100, 180
+CONFIG.V = 100; % 100, 180
 CONFIG.visualise = false; % bool
 CONFIG.plot = true; % bool
 
@@ -49,12 +49,12 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-% aircraft = Trim(aircraft);
+aircraft = Trim(aircraft);
 
 dx_prev = zeros(13);
 
 % remove the below line once the Trim function is complete.
-aircraft.controls = aircraft.trim;
+% aircraft.controls = aircraft.trim;
 
 % dont remove this
 [~, control_vec, ~] = get_vectors(aircraft);
