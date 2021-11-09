@@ -21,7 +21,7 @@ for cg = ["CG1","CG2"]
 for v = [100,180]   
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 1; % 1->8
+CONFIG.flight_plan = 3; % 1->8
 CONFIG.CG = cg; % CG1, CG2
 CONFIG.V = v; % 100, 180
 CONFIG.visualise = false; % bool
@@ -140,7 +140,7 @@ t = CONFIG.t;
 leg = ["CG1, 100KEAS", "CG1, 180KEAS", "CG2, 100KEAS", "CG2, 180KEAS"];
 
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,a_100_1.state(11,:),'LineWidth',2);
 plot(t,a_180_1.state(11,:),'LineWidth',2);
@@ -154,7 +154,7 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Position, (m)','Interpreter','Latex');
 legend(leg);
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,a_100_1.state(12,:),'LineWidth',2);
 plot(t,a_180_1.state(12,:),'LineWidth',2);
@@ -168,7 +168,7 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Position, (m)','Interpreter','Latex');
 legend(leg);
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,-a_100_1.state(13,:),'LineWidth',2);
 plot(t,-a_180_1.state(13,:),'LineWidth',2);
@@ -183,7 +183,7 @@ ylabel('Position, (m)','Interpreter','Latex');
 legend(leg);
 
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.state(4,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.state(4,:)),'LineWidth',2);
@@ -197,7 +197,7 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angular Velocity ($^o/s$)','Interpreter','Latex');
 legend(leg);
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.state(5,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.state(5,:)),'LineWidth',2);
@@ -211,7 +211,7 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angular Velocity ($^o/s$)','Interpreter','Latex');
 legend(leg);
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.state(6,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.state(6,:)),'LineWidth',2);
@@ -227,7 +227,7 @@ legend(leg);
 
 
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.attitude(2,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.attitude(2,:)),'LineWidth',2);
@@ -241,7 +241,7 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angle, ($^o$)','Interpreter','Latex');
 legend(leg);
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.attitude(1,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.attitude(1,:)),'LineWidth',2);
@@ -255,9 +255,11 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angle, ($^o$)','Interpreter','Latex');
 legend(leg);
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
-plot(t,rad2deg(a_100_1.attitude(3,:)),'LineWidth',2);
+x = a_100_1.attitude(3,:);
+x(x>0.1)=x(x>0.1)-2*pi;
+plot(t,rad2deg(x),'LineWidth',2);
 plot(t,rad2deg(a_180_1.attitude(3,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.attitude(3,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.attitude(3,:)),'LineWidth',2);
@@ -271,7 +273,7 @@ legend(leg);
 
 
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.control(3,:)),'k-','LineWidth',2);
 grid minor
@@ -281,7 +283,7 @@ han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Deflection ($^o$)','Interpreter','Latex');
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.control(2,:)),'k-','LineWidth',2);
 grid minor
@@ -291,7 +293,7 @@ han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Deflection ($^o$)','Interpreter','Latex');
 figure
-set(gca, 'fontsize', 20)
+set(gca, 'fontsize', 30)
 hold on
 plot(t,rad2deg(a_100_1.control(4,:)),'k-','LineWidth',2);
 grid minor
@@ -302,5 +304,19 @@ xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Deflection ($^o$)','Interpreter','Latex');
 
 
+figure
+set(gca, 'fontsize', 30)
+hold on
+plot(a_100_1.state(11,:),a_100_1.state(12,:),'LineWidth',2);
+plot(a_180_1.state(11,:),a_180_1.state(12,:),'LineWidth',2);
+plot(a_100_2.state(11,:),a_100_2.state(12,:),'LineWidth',2);
+plot(a_180_2.state(11,:),a_180_2.state(12,:),'LineWidth',2);
+grid minor
+% title('Top-Down Trajectory');
+han.XLabel.Visible='on';
+han.YLabel.Visible='on';
+xlabel('x, (m)','Interpreter','Latex');
+ylabel('y (m)','Interpreter','Latex');
+legend(leg);
 
 
