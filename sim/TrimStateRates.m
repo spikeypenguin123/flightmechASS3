@@ -23,7 +23,10 @@ function Xdot = TrimStateRates(X, U, aircraft)
         Xdot = StateRates(aircraft, X, U, angular_rates);
         
         % Calculate angular rates
-        [alpha_dot, beta_dot] = angularRates(Xdot, X);
+        angular_rates = AngularRates(X,Xdot);
+        
+        alpha_dot = angular_rates(1);
+        beta_dot = angular_rates(2);
         
         % Calculate errors in angle of attack and sideslip rates
         error_alpha_dot = abs((alpha_dot - alpha_dot_old)/alpha_dot_old);

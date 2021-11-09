@@ -1,30 +1,31 @@
-function aircraft = TrimTest(aircraft, X0)
+function aircraft = TrimTest(aircraft)
 
     % Extract aircraft parameters
-    m           = aircraft.Inertial.m;
-    g           = aircraft.Inertial.g;
-    S           = aircraft.Geo.S;
-    CLa         = aircraft.Aero.CLa;
-    CLo         = aircraft.Aero.CLo;
-    control_min = aircraft.ControlLimits.Lower;
-    control_max = aircraft.ControlLimits.Upper;
-    
+    m = aircraft.inertial.m;                        % Mass (kg)
+    g = aircraft.inertial.g;                        % Gravity (m/s^2)
+    S = aircraft.geo.S;
+    CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
+    CLa = aircraft.aero.CLa;                        % dCL/dalpha
+    control_min = aircraft.control_limits.Lower;
+    control_max = aircraft.control_limits.Upper;
+    X0 = PullState(aircraft);
+
     % Determine aircraft aerodynamic angles and airspeed
-    V = aeroangles(X0);
+    [~, ~, V] = AeroAngles(X0);                     % Velocity (m/s)
     
     % Determine the flow properties of the aircraft
-    [~, Q] = flowproperties(X0, V);
+    [~, Q] = FlowProperties(aircraft, V);           % Density (kg/m^3) and Dynamic Pressure (kPa)
     
     % Estimate the lift coefficient
     CL = m*g/(Q*S);
     
     % Make initial estimates of the inputs
-    alpha0 = (CL - CLo)/CLa;
-    delta_t0 = 0.5;
-    delta_e0 = 0;
-    delta_a0 = 0;
-    delta_r0 = 0;
-    U0 = [delta_t0; delta_e0; delta_a0; delta_r0];
+    alpha0 = (CL - CL0)/CLa;
+    dT0 = 0.5;
+    de0 = 0;
+    da0 = 0;
+    dr0 = 0;
+    U0 = [dT0; de0; da0; dr0];
 
     % Define indices in the state and state rate vector, to be
     % trimmed, udot, wdot, qdot, and w. The rate of change of which should be zero
@@ -49,16 +50,16 @@ function aircraft = TrimTest(aircraft, X0)
     % Numerical Newton-Ralphson method to solve for control inputs
     while ~converged      
         
-%         % Determine the aircraft pitch
-%         euler_att = quat2euler(X0(7:10));
-%         euler_att(2) = x_bar(1);
-%         X0(7:10) = euler2quat(euler_att);
-%         
-%         % Normalise the quaternion
-%         X0(7:10) = X0(7:10)/norm(X0(7:10));
+        % Determine the aircraft pitch
+        euler_att = q2e(X0(7:10));
+        euler_att(2) = x_bar(1);
+        X0(7:10) = e2q(euler_att);
+        
+        % Normalise the quaternion
+        X0(7:10) = X0(7:10)/norm(X0(7:10));
           
         % Determine the state rate vector
-        [Xdot] = getstaterates(aircraft, X0, U0);
+        Xdot = TrimStateRates(X0, U0, aircraft);
         fx_bar = Xdot(iTrim);
 
         % Perturb the variables to get the Jacobian matrix
@@ -86,7 +87,7 @@ function aircraft = TrimTest(aircraft, X0)
             
             % Determine the state rate vector for the perturbed state
             % and input vectors
-            [Xdot_new] = getstaterates(aircraft, X_new, U_new);
+            Xdot_new = TrimStateRates(X_new, U_new, aircraft);
 
             % Place in the 'k' column of the Jacobian matrix
             J(:, k) = (Xdot_new(iTrim) - Xdot(iTrim))./(delta(k));
@@ -128,11 +129,7 @@ function aircraft = TrimTest(aircraft, X0)
         % Incriment iteration count
         iterCount = iterCount + 1;
     end
-    
-    % Save the final state and input vectors as trimmed vectors
-    X_trimmed = X0;
-    U_trimmed = U0;    
-    
-    
-    
+      
+    % Set the Trimmed State and Control to the aircraft struct
+    aircraft = PushState(X_trimmed,U_trimmed,aircraft);
 end
