@@ -11,7 +11,7 @@ function Xd = StateRates(aircraft, X, U, angular_rates)
     % State rates --> x(tn) = ⃗xn = [ un vn wn pn qn rn q0n q1n q2n q3n xen yen zen ]T .
     
     % Attitude in Euler angles 
-    att_eul = q2e(X(7:10));
+    att_eul = q2e(X(7:10)/norm(X(7:10)));
     phi = att_eul(1);
     theta = att_eul(2);
     psi = att_eul(3);
@@ -90,6 +90,7 @@ function Xd = StateRates(aircraft, X, U, angular_rates)
 
 
     % Position time derivatives
+
     positiondot = (Cz(-psi)*Cy(-theta)*Cx(-phi))*[u v w]'; % Going from body to earth
     xedot = positiondot(1);
     yedot = positiondot(2);

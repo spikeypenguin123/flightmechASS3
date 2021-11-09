@@ -26,9 +26,9 @@ addpath('Controls');
 
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 1; % 1->8
-CONFIG.CG = "CG1"; % CG1, CG2
-CONFIG.V = 100; % 100, 180
+CONFIG.flight_plan = 4; % 1->8
+CONFIG.CG = "CG2"; % CG1, CG2
+CONFIG.V = 180; % 100, 180
 CONFIG.visualise = true; % bool
 CONFIG.plot = true; % bool
 
@@ -42,8 +42,13 @@ CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 aircraft = Initialisation(CONFIG.CG, CONFIG.V, CONFIG.debug);
 
 if CONFIG.visualise
-    visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
+    if CONFIG.flight_plan == 4
+        visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
+        aircraft.state.z_e, true, 1); 
+    else
+        visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
         aircraft.state.z_e, true, CONFIG.V/3); 
+    end
 end
 
 %% main loop
@@ -55,6 +60,7 @@ dx_prev = zeros(13);
 
 % remove the below line once the Trim function is complete.
 % aircraft.controls = aircraft.trim;
+aircraft.trim = aircraft.controls;
 
 % dont remove this
 [~, control_vec, ~] = get_vectors(aircraft);
