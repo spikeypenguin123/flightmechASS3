@@ -7,7 +7,7 @@ addpath('../sim')
 
 mat1 = load('Longitudinal_Matrices_PC9_nominalCG1_100Kn_1000ft.mat');
 mat2 = load('Longitudinal_Matrices_PC9_nominalCG1_180Kn_1000ft.mat');
-mat3 = load('Longitudinal_Matrices_PC9_CG2_100Kn_1000ft.mat');
+mat3 = load('Longitudinal_Matrices_PC9_nominalCG2_100Kn_1000ft.mat');
 
 % Go through each case
 for cg = ["CG1", "CG2"]
@@ -88,7 +88,7 @@ for cg = ["CG1", "CG2"]
         %% Part A
         disp('Part A');
         % Using Dynamic Stability Matrix from Week 10A and terms from Week
-        % 8B+
+        % 8B
         
         u1 = V; % delta_T
         theta1 = 1;    % DOUBLE CHECK
@@ -114,15 +114,13 @@ for cg = ["CG1", "CG2"]
         
         % Longitudinal State Matrix 
         % alpha form
-        e_lona = eig(A_lona.A_Lon);
+        e_lona = eig(A_lona);
         [omega_lata, zeta_lata] = damp(e_lona);
-        disp([newline, 'Alpha form matrix: ']);
-        disp('Eigenvalues of longitudinal motion: ');
+        disp('Alpha form matrix: ');
+        disp('Eigenvalues of lateral motion: ');
         disp(num2str(e_lona));
         disp('Natural Frequency: ');
-        disp(num2str(omega_lata));
-        disp('Damping Ratio: ');
-        disp(num2str(zeta_lata));
+        disp(num2
         
         
         % Lateral State Matrices
@@ -135,7 +133,7 @@ for cg = ["CG1", "CG2"]
              
         e_latb = eig(A_latb);
         [omega_latb, zeta_latb] = damp(e_latb); % Need to double check
-        disp([newline, 'Beta form matrix: ']);
+        disp('Beta form matrix: ');
         disp('Eigenvalues of lateral motion: ');
         disp(num2str(e_latb));
         disp('Natural Frequency: ');
