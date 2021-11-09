@@ -6,6 +6,11 @@ addpath('Aircraft');
 addpath('AircraftData');
 addpath('Controls');
 
+set(groot,'defaulttextinterpreter','latex')
+set(groot, 'defaultAxesTickLabelInterpreter','latex'); 
+set(groot, 'defaultLegendInterpreter','latex');
+
+
 %% Configure
 j = 1;
 a_100_1 = struct();
@@ -16,7 +21,7 @@ for cg = ["CG1","CG2"]
 for v = [100,180]   
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 3; % 1->8
+CONFIG.flight_plan = 1; % 1->8
 CONFIG.CG = cg; % CG1, CG2
 CONFIG.V = v; % 100, 180
 CONFIG.visualise = false; % bool
@@ -24,7 +29,7 @@ CONFIG.plot = false; % bool
 
 CONFIG.t_start = 0; % don't change this
 CONFIG.t_step = 0.1;
-CONFIG.t_end = 100;
+CONFIG.t_end = 200;
 CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 
 %% Inititalise
@@ -39,12 +44,13 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-% aircraft = Trim(aircraft);
+aircraft = Trim(aircraft);
 
 dx_prev = zeros(13);
 
 % remove the below line once the Trim function is complete.
-aircraft.controls = aircraft.trim;
+% aircraft.controls = aircraft.trim;
+aircraft.trim = aircraft.controls;
 
 % dont remove this
 [~, control_vec, ~] = get_vectors(aircraft);
@@ -134,39 +140,42 @@ t = CONFIG.t;
 leg = ["CG1, 100KEAS", "CG1, 180KEAS", "CG2, 100KEAS", "CG2, 180KEAS"];
 
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,a_100_1.state(11,:),'LineWidth',2);
 plot(t,a_180_1.state(11,:),'LineWidth',2);
 plot(t,a_100_2.state(11,:),'LineWidth',2);
 plot(t,a_180_2.state(11,:),'LineWidth',2);
 grid minor
-title('Displacement (x_{e})','FontName','Latex');
+% title('Displacement ($x_{e}$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Position, (m)','Interpreter','Latex');
 legend(leg);
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,a_100_1.state(12,:),'LineWidth',2);
 plot(t,a_180_1.state(12,:),'LineWidth',2);
 plot(t,a_100_2.state(12,:),'LineWidth',2);
 plot(t,a_180_2.state(12,:),'LineWidth',2);
 grid minor
-title('Displacement (y_{e})','FontName','Latex');
+% title('Displacement ($y_{e}$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Position, (m)','Interpreter','Latex');
 legend(leg);
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,-a_100_1.state(13,:),'LineWidth',2);
 plot(t,-a_180_1.state(13,:),'LineWidth',2);
 plot(t,-a_100_2.state(13,:),'LineWidth',2);
 plot(t,-a_180_2.state(13,:),'LineWidth',2);
 grid minor
-title('Altitude (-z_{e})','FontName','Latex');
+% title('Altitude ($-z_{e}$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
@@ -174,39 +183,42 @@ ylabel('Position, (m)','Interpreter','Latex');
 legend(leg);
 
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.state(4,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.state(4,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.state(4,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.state(4,:)),'LineWidth',2);
 grid minor
-title('Angular Velocity about x','FontName','Latex');
+% title('Angular Velocity about $x$ ($p$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angular Velocity ($^o/s$)','Interpreter','Latex');
 legend(leg);
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.state(5,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.state(5,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.state(5,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.state(5,:)),'LineWidth',2);
 grid minor
-title('Angular Velocity about y','FontName','Latex');
+% title('Angular Velocity about $y$ ($q$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angular Velocity ($^o/s$)','Interpreter','Latex');
 legend(leg);
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.state(6,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.state(6,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.state(6,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.state(6,:)),'LineWidth',2);
 grid minor
-title('Angular Velocity about z','FontName','Latex');
+% title('Angular Velocity about $z$ ($r$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
@@ -215,39 +227,42 @@ legend(leg);
 
 
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.attitude(2,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.attitude(2,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.attitude(2,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.attitude(2,:)),'LineWidth',2);
 grid minor
-title('Pitch \theta','FontName','Latex');
+% title('Pitch ($\theta$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angle, ($^o$)','Interpreter','Latex');
 legend(leg);
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.attitude(1,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.attitude(1,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.attitude(1,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.attitude(1,:)),'LineWidth',2);
 grid minor
-title('Roll \phi','FontName','Latex');
+% title('Roll ($\phi$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Angle, ($^o$)','Interpreter','Latex');
 legend(leg);
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.attitude(3,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_1.attitude(3,:)),'LineWidth',2);
 plot(t,rad2deg(a_100_2.attitude(3,:)),'LineWidth',2);
 plot(t,rad2deg(a_180_2.attitude(3,:)),'LineWidth',2);
 grid minor
-title('Yaw \psi','FontName','Latex');
+% title('Yaw ($\psi$)');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
@@ -256,28 +271,31 @@ legend(leg);
 
 
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.control(3,:)),'k-','LineWidth',2);
 grid minor
-title('Aileron Deflection','FontName','Latex');
+% title('Aileron Deflection');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Deflection ($^o$)','Interpreter','Latex');
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.control(2,:)),'k-','LineWidth',2);
 grid minor
-title('Elevator Deflection','FontName','Latex');
+% title('Elevator Deflection');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');
 ylabel('Deflection ($^o$)','Interpreter','Latex');
 figure
+set(gca, 'fontsize', 20)
 hold on
 plot(t,rad2deg(a_100_1.control(4,:)),'k-','LineWidth',2);
 grid minor
-title('Rudder Deflection','FontName','Latex');
+% title('Rudder Deflection');
 han.XLabel.Visible='on';
 han.YLabel.Visible='on';
 xlabel('Time, (s)','Interpreter','Latex');

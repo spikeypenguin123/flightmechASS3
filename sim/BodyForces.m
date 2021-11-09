@@ -45,7 +45,7 @@ function [Forces, Moments] = BodyForces(aircraft,X,U,alpha,beta,angular_rates,rh
     r = X(6);
     
     % Attitude in Euler angles 
-    att_eul = q2e(X(7:10));
+    att_eul = q2e(X(7:10)/norm(X(7:10)));
     phi = att_eul(1);
     the = att_eul(2);
     psi = att_eul(3);

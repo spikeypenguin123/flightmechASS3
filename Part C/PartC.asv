@@ -350,70 +350,38 @@ for cg = ["CG1", "CG2"]
         disp('Category A');
         
         % SPM
+        disp('SPM:');
         if z_SPM >= 0.35 && z_SPM <= 1.3
-            disp('SPM Handling: Level 1');
+            disp('Handling: Level 1');
         elseif z_SPM >= 0.25 && z_SPM <= 2
-            disp('SPM Handling: Level 2');
-        elseif z_SPM >= 0.15
-            disp('SPM Handling: Level 3');
+            disp('Handling: Level 2');
+        elseif z_SPM > 0.15
+            disp('Handling: Level 3');
         else
-            disp('SPM No Handling Level');
+            disp('No Handling Level');
         end
             
-        % Phugoid
-        if z_Phu >= 0.04
-            disp('Phugoid Handling: Level 1');
-        elseif z_Phu >= 0
-            disp('Phugoid Handling: Level 2');
-        else
-            disp('Phugoid Level 3 or no handling level');
-        end
         
         % Category B
         disp([newline, 'Category B']);
         
         % SPM
-        if z_SPM >= 0.3 && z_SPM <= 2
-            disp('SPM Handling: Level 1');
-        elseif z_SPM >= 0.2 && z_SPM <= 2
-            disp('SPM Handling: Level 2');
-        elseif z_SPM >= 0.15
-            disp('SPM Handling: Level 3');
-        else
-            disp('SPM No Handling Level');
-        end
-        
-        % Phugoid
-        if z_Phu >= 0.04
-            disp('Phugoid Handling: Level 1');
-        elseif z_Phu >= 0
-            disp('Phugoid Handling: Level 2');
-        else
-            disp('Phugoid Level 3 or no handling level');
-        end
+        disp('SPM');
+        if 
         
         
         % Category C
         disp([newline, 'Category C']);
         
-        % SPM
-        if z_SPM >= 0.35 && z_SPM <= 1.3
-            disp('SPM Handling: Level 1');
-        elseif z_SPM >= 0.25 && z_SPM <= 2
-            disp('SPM Handling: Level 2');
-        elseif z_SPM >= 0.15
-            disp('SPM Handling: Level 3');
-        else
-            disp('SPM No Handling Level');
-        end
         
         % Phugoid
-        if z_Phu >= 0.04
-            disp('Phugoid Handling: Level 1');
-        elseif z_Phu >= 0
-            disp('Phugoid Handling: Level 2');
+        disp('Phugoid');
+        if z_Phu > 0.04
+            disp('Handling: Level 1');
+        elseif z_Phu > 0
+            disp('Handling: Level 2');
         else
-            disp('Phugoid Level 3 or no handling level');
+            disp('Level 3 or no handling level');
         end
         
         
