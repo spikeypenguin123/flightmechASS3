@@ -23,7 +23,7 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
             end
         case 4
             if t <= 15.6
-                load('controlsta.mat');
+                load('Loop.mat');
                 c = controls(:,i);
                 delta_e = c(1) + delta_e;
             end
