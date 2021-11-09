@@ -311,7 +311,7 @@ for cg = ["CG1", "CG2"]
             leg = legend('u','$\alpha$','q','$\theta$','$z_{e}$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + '.png']);
+            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + dT + num2str(def(1)) + de + num2str(def(2)) + '.png']);
             hold off
 
             % Lateral Case
@@ -330,7 +330,7 @@ for cg = ["CG1", "CG2"]
             leg = legend('$\beta$','p','r','$\phi$','$\psi$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Lateral' + cg + '@' + num2str(speed) + 'kts' + '.png']);
+            saveas(gcf,['Lateral' + cg + '@' + num2str(speed) + 'kts' + da + num2str(def(1)) + dr + num2str(def(2)) + '.png']);
             hold off
             
         end

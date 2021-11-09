@@ -49,9 +49,9 @@ for cg = ["CG1", "CG2"]
                 output.data_CG1_180_lon = [output.data_lon(:,4) real(output.data_lon(:,5:6))];
                 output.data_CG2_100_lon = [output.data_lon(:,7) real(output.data_lon(:,8:9))];
 
-                output.data_CG1_100_lat = [output.data_lat(:,1) real(output.data_lat(:,2:3)];
-                output.data_CG1_180_lat = [output.data_lat(:,4) real(output.data_lat(:,5:6)];
-                output.data_CG2_100_lat = [output.data_lat(:,7) real(output.data_lat(:,8:9)];
+                output.data_CG1_100_lat = [output.data_lat(:,1) real(output.data_lat(:,2:3))];
+                output.data_CG1_180_lat = [output.data_lat(:,4) real(output.data_lat(:,5:6))];
+                output.data_CG2_100_lat = [output.data_lat(:,7) real(output.data_lat(:,8:9))];
 
                 output.check = output.data_lon;
             return
@@ -311,7 +311,7 @@ for cg = ["CG1", "CG2"]
             leg = legend('u','$\alpha$','q','$\theta$','$z_{e}$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + '.png']);
+            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + dT + num2str(def '.png']);
             hold off
 
             % Lateral Case
