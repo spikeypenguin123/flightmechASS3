@@ -65,6 +65,7 @@ function aircraft = TrimTest(aircraft)
         Xdot = StateRates(aircraft, X0, U0, AngularRates(X0,Xdot) );
         X0(11:13)=[];
         Xdot(11:13)=[];
+        fx_bar = Xdot(iTrim);
 
         % Perturb the variables to get the Jacobian matrix
         for k = 1:length(x_bar)
@@ -97,9 +98,9 @@ function aircraft = TrimTest(aircraft)
             
             % Place in the 'k' column of the Jacobian matrix
             J(:, k) = (Xdot_new(iTrim) - Xdot(iTrim))./(delta(k));
+            J1 = (Xdot_new-Xdot
         end
         
-        fx_bar = Xdot(iTrim);
         % Update the x_bar vector
         x_bar_new = x_bar - J\fx_bar;
         

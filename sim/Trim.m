@@ -24,7 +24,7 @@
 function aircraft = Trim(aircraft)
     % Get the state variables into a single vector
     X0 = PullState(aircraft);
-    
+
     % Control Limits (radians): [dT, de, da, dr]
     ControlMin = aircraft.control_limits.Lower;
     ControlMax = aircraft.control_limits.Upper;

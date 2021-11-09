@@ -26,10 +26,10 @@ addpath('Controls');
 
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 4; % 1->8
+CONFIG.flight_plan = 1; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 100; % 100, 180
-CONFIG.visualise = false; % bool
+CONFIG.visualise = true; % bool
 CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this
@@ -49,7 +49,11 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-aircraft = Trim(aircraft);
+aircraft = TrimTest(aircraft);
+
+aircraft.controls
+aircraft.trim
+return
 
 dx_prev = zeros(13);
 

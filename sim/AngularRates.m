@@ -9,7 +9,7 @@ function angular_rates = AngularRates(X,Xd)
 u = X(1);
 v = X(2);
 w = X(3);
-udot = Xd(1);
+% udot = Xd(1);
 vdot = Xd(2);
 wdot = Xd(3);
 
@@ -22,7 +22,7 @@ beta = asin(v/V);
 
 % Sideslip and angle of attack angular rates
 angular_rates(1) = (wdot/V)*sec(alpha)*sec(beta);    % alphad: Angle of attack rate 
-angular_rates(2) = (vdot/V)*sec(beta);                       % betad: Sideslip rate
+angular_rates(2) = (vdot/V)*sec(beta);               % betad: Sideslip rate
     
 
 end
