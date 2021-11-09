@@ -1,150 +1,132 @@
-% Trim.m determine the controls and states required for equilibrium steady level flight
-% Once the equilibrium condition is specified, we need to determine the
-% combination of steady control inputs that are required in order to
-% maintain that equilibrium --> aka trimming the simulation! 
-
-% Needs to calculate u for which xd = 0
-
-% DO NOT NEED TO TRIM TURNS OF LOOPS SO ONLY FOR STEADY LEVEL FLIGHT
-% ONLY perturb ALPHA, THROTTLE, ELEVATOR
-
-% Inputs
-% XO = [uvw,pqr,q0q1q2q3,xyz_e]
-% aircraft: struct containing aircraft data
-
-% Outputs 
-% Xtrimmed = Trimmed state vector (same structure as input)
-% Utrimmed = [dT (Thrust), de (elevator), da (aileron), dr (rudder)]'
-
-% Other Variables
-% xbar0: The current vector containing the variables requiring perturbation
-% xbar: The new vector containing the variables requiring perturbation
-
-
 function aircraft = Trim(aircraft)
-    % Get the state variables into a single vector
-    X0 = PullState(aircraft);
 
-    % Control Limits (radians): [dT, de, da, dr]
-    ControlMin = aircraft.control_limits.Lower;
-    ControlMax = aircraft.control_limits.Upper;
-
-    % Useful Parameters
-    S = aircraft.geo.S;
+    % Extract aircraft parameters
     m = aircraft.inertial.m;                        % Mass (kg)
     g = aircraft.inertial.g;                        % Gravity (m/s^2)
-%     altitude = -X0(13);                           % Altitude, -z_e (m)
-    [~, ~, V] = AeroAngles(X0);                     % Velocity (m/s)
-    [~, Q] = FlowProperties(aircraft, V);           % Density (kg/m^3) and Dynamic Pressure (kPa)
+    S = aircraft.geo.S;                             % wing area (m^2)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
     CLa = aircraft.aero.CLa;                        % dCL/dalpha
-    gamma = 0;                                      % climb angle (radians)
-    % Estimate CL (lift coefficient)
-    CL = m*g/Q/S;
+    control_min = aircraft.control_limits.Lower;    % Control surface min limit
+    control_max = aircraft.control_limits.Upper;    % Control surface max limit
+    X0 = PullState(aircraft);	% Pull state variables into a 13x1 vector
     
-    % Guess initial alpha and beta (these guesses were defined in Lec )
-    alpha0 = 0; % (CL-CL0)/CLa;  % Estimate for current AoA (rad)
-    dT0 = 0.1;              % Initial Thrust    (Newtons)
-    de0 = 0.1;                % Initial Elevator  (rad)
-    da0 = 0;                % Initial Aileron   (rad)
-    dr0 = 0;                % Initial Rudder    (rad)
-    U0 = [dT0;de0;da0;dr0]; % Initial Control Vector
+    % Indexs for u, w and q in the state vector
+    uwq = [1 3 5];
     
-    tol = 10e-8;        % Error tolerance
-    err = 1;            % Intitial Error
-    convergence = false;% check for convergence
-    maxIter = 1000;     % Number of iterations
-    n = 1;              % Intitialise Iteration counter
-    delta = 10^-3;      % Perturbation Size
+    % Aircraft velocity (m/s)
+    V = sqrt(X0(1).^2 + X0(2).^2 + X0(3).^2);
     
-    % Perturbation Vector: (Only perturb alpha, Throttle and Elevator)
-    xbar0 = [alpha0;U0(1);U0(2)];
-    udwdqd = [1,3,5];           % element locations of udot, wdot and qdot in the X state vector
+    % Dynamic Pressure (kPa)
+    [~, Q] = FlowProperties(aircraft, V);
     
-    % Initialise the Jacobian
-    J = zeros(length(xbar0));
+    % Lift coefficient
+    CL = m*g/(Q*S);
     
-    % Newton-Ralphson Numerical Solver
-    while ~convergence
+    % Set an initial estimate for control vector and the AoA
+    alpha0 = (CL - CL0)/CLa;
+    dT0 = 0.5;
+    de0 = 0;
+    da0 = 0;
+    dr0 = 0;
+    % Create the control vector
+    U0 = [dT0; de0; da0; dr0]; 
+
+    % Make Empty Jacobian for speed
+    J = zeros(3);
+    
+    % Define perturbation increment
+    delta = 1e-6;
+    
+    % Define the xbar vector, i.e. the values to be perturbed
+    x_bar = [alpha0; U0(1); U0(2)];
+    
+    % Initialise convergance boolean and tolerance
+    converged = false;
+    tol = 1e-10;
+    maxIter = 500;
+    n = 1;
+    
+    % Numerical Newton-Ralphson method to solve for control inputs
+    while ~converged      
         
-        % Calculate state for current trim values (set pitch to perturbed
-        % alpha) (slide 19 Week 9B)
-        att_eul = q2e(X0(7:10));	% Convert state quats to euler angles
-        att_eul(2) = xbar0(1) + gamma;       % Set perturbed AoA to the pitch
-        X0(7:10) = e2q(att_eul);    % Convert mod'fd attitude to quat
+        % Determine the aircraft pitch
+        euler_att = q2e(X0(7:10));
+        euler_att(2) = x_bar(1);
+        X0(7:10) = e2q(euler_att);
+        
+        % Normalise the quaternion
         X0(7:10) = X0(7:10)/norm(X0(7:10));
+          
+        % Determine the state rate vector
+        Xdot = TrimStateRates(X0, U0, aircraft);
+        fx_bar = Xdot(uwq);
+
+        % Perturb the variables to get the Jacobian matrix
+        for k = 1:length(x_bar)
+            
+            % Initialise the state and input vector to be trimmed
+            Xnew = X0;
+            Unew = U0;
+            
+            % For the perturbation of alpha
+            if k == 1
                 
-        % State Rate Vector
-        Xd0 = TrimRates(X0,U0,aircraft);
-
-        % Non-linear Function f(x) = [udot;wdot;qdot]
-        fX = [Xd0(1);Xd0(3);Xd0(5)];
-        
-        %% Forward difference
-        for i = 1:3
-            % Initialisation fo the updated state vector 
-            X = X0;
-            U = U0;
-
-            if i == 1
-                % Perturb alpha
-                alphaPert = xbar0(1) + delta;
-                X(1) = V*cos(alphaPert);            % u: x-vel update
-                X(3) = V*sin(alphaPert);            % w: z-vel update
-            else 
-                % Perturb throttle and elevator
-                U(i-1) = xbar0(i) + delta;
+                % Perturbation of alpha, which affects u and w in the
+                % state vector
+                Xnew(1) = V*cos(x_bar(k) + delta);
+                Xnew(3) = V*sin(x_bar(k) + delta);
+               
+            % For the perturbations of inputs
+            else
+                
+                % Perturbation of the input vector, delta_t and
+                % delta_e
+                Unew(k-1) = x_bar(k) + delta;
             end
             
-%             % Update state rates 
-             Xd = TrimRates(X,U,aircraft);
-            
-            % Update Jacobian
-            J(:,i) = (Xd(udwdqd) - fX)./delta;
-%             J(:,i) = (Xd(udwdqd) - Xd0(udwdqd))/delta;
-        end
-        
-        % Newton-Ralphson Solver: Calculate next trim (xbar) values
-        xbar = xbar0 - inv(J)*fX;
-        J
-        xbar0
-        fX
-        xbar
-        Jinv = inv(J)
-        Jdet = det(J)
-        % Calculate error
-        errV = xbar - xbar0;
-        err = max(errV);
-        xbar0 = xbar;   % Update xbar for next loop
-                
-        % Update Control (U0) Vector
-        U0(1) = xbar0(2);   % Updated perturbed throttle --> save to Control U0
-        U0(2) = xbar0(3);   % Updated perturbed elevator --> save to Control U0
-        
-        % Update State (X0) Vector
-        X0(1) = V*cos(xbar(1));     % Update perturbed x-velocity --> save to State X0
-        X0(3) = V*sin(xbar(1));     % Update perturbed z-velocity --> save to State X0
-        
-        % Ensure compliance with the max and min of controls 
-        if  any(U0 < ControlMin)
-            disp("A control Input has dropped below its minimum value");
-        elseif any(U0 > ControlMax)
-            disp("A control Input has risen above its maximum value");
-        end
+            % State rate vector for the perturbed state and input vectors
+            Xdot_new = TrimStateRates(Xnew, Unew, aircraft);
 
-        % Has the Trim Solver convereged to solution?
-        if max(err) < tol
-            convergence = true;
+            % Build Jacobian
+            J(:, k) = (Xdot_new(uwq) - Xdot(uwq))./(delta);
         end
         
-        % Has the maximum number of iterations been completed
-        if n < maxIter
-            disp("Maximum number of iterations reached in Trim.m");
-            break
+        % Update x_bar
+        x_bar_new = x_bar - J\fx_bar;
+        
+        % Determine error
+        error = abs((x_bar_new - x_bar)./delta);
+        
+        % Check if solution has converged
+        if max(error) < tol
+            converged = true;
         end
-        n = n+1;         % Increase iteration number
-    end    
-    
+        
+
+        
+        % Update the x_bar vector
+        x_bar = x_bar_new;
+        
+        % Update the state and input vectors
+        X0(1) = V*cos(x_bar(1));
+        X0(3) = V*sin(x_bar(1));
+        U0(1) = x_bar(2);
+        U0(2) = x_bar(3);
+        
+%       Aircraft control limits
+        if any(U0 > control_max) || any(U0 < control_min)
+            disp('WARNING: THE THROTTLE OR ELEVATOR HAVE EXCEEDED LIMITS!')
+        end
+        
+        % Check for the iteration limit
+        if n > maxIter
+            disp('WARNING: ITERATION LIMIT IN TRIM')
+        end
+        
+        % Incriment iteration count
+        n = n + 1;
+    end
+      
     % Set the Trimmed State and Control to the aircraft struct
     aircraft = PushState(X0,U0,aircraft);
 end

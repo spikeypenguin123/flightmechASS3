@@ -1,4 +1,4 @@
-function  [Pmax, Thrust] = PropForces(rho,u,delta_T,Prop)
+function  [Pmax, Thrust] = PropForces(rho,V_T,delta_T,Prop)
   
 % INPUT:
 % OUTPUT:
@@ -11,7 +11,7 @@ eta = Prop.eta; % Data from flight condition
 Pmax_SL = Prop.P_max; % Data from flight condition
 
 Pmax = Pmax_SL*(1.1324*sigma - 0.1324); % Max Power
-Thrust = (eta*Pmax*delta_T)/u; % Thrust
+Thrust = (eta*Pmax*delta_T)/V_T; % Thrust
 
 
 end

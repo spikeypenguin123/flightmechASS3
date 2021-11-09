@@ -2,8 +2,8 @@ function eulers = q2e(q)
     % in: 4xn quaternions
     % out: 3xn eulers (rads)
 
-    % normalise quaternions
-    q = q./sqrt(sum(q.^2,1));
+%     % normalise quaternions
+%     q = q./sqrt(sum(q.^2,1));
     
     q_0 = q(1,:);
     q_1 = q(2,:);

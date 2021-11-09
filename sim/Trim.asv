@@ -1,25 +1,25 @@
-function aircraft = TrimTest(aircraft)
+function aircraft = Trim(aircraft)
 
     % Extract aircraft parameters
     m = aircraft.inertial.m;                        % Mass (kg)
     g = aircraft.inertial.g;                        % Gravity (m/s^2)
-    S = aircraft.geo.S;
+    S = aircraft.geo.S;                             % wing area (m^2)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
     CLa = aircraft.aero.CLa;                        % dCL/dalpha
-    control_min = aircraft.control_limits.Lower;
-    control_max = aircraft.control_limits.Upper;
-    X0 = PullState(aircraft);
+    control_min = aircraft.control_limits.Lower;    % Control surface min limit
+    control_max = aircraft.control_limits.Upper;    % Control surface max limit
+    X0 = PullState(aircraft);	% Pull state variables into a 13x1 vector
 
-    % Determine aircraft aerodynamic angles and airspeed
-    [~, ~, V] = AeroAngles(X0);                     % Velocity (m/s)
+    % Aircraft velocity (m/s)
+    V = sqrt(X0(1).^2 + X0(2).^2 + X0(3).^2);
     
-    % Determine the flow properties of the aircraft
-    [~, Q] = FlowProperties(aircraft, V);           % Density (kg/m^3) and Dynamic Pressure (kPa)
+    % Dynamic Pressure (kPa)
+    [~, Q] = FlowProperties(aircraft, V);
     
-    % Estimate the lift coefficient
+    % Lift coefficient
     CL = m*g/(Q*S);
     
-    % Make initial estimates of the inputs
+    % Set an initial estimate for control vector and the AoA
     alpha0 = (CL - CL0)/CLa;
     dT0 = 0.5;
     de0 = 0;
@@ -27,13 +27,10 @@ function aircraft = TrimTest(aircraft)
     dr0 = 0;
     U0 = [dT0; de0; da0; dr0];
 
-    % Define indices in the state and state rate vector, to be
-    % trimmed, udot, wdot, qdot, and w. The rate of change of which should be zero
-    % after trimming
-    iTrim = [1 3 5];
+
     
     % Preallocate memory
-    J = zeros(length(iTrim));
+    J = zeros(3);
     
     % Define perturbation increment
     delta = [1e-6; 1e-6; 1e-6];
@@ -60,7 +57,7 @@ function aircraft = TrimTest(aircraft)
           
         % Determine the state rate vector
         Xdot = TrimStateRates(X0, U0, aircraft);
-        fx_bar = Xdot(iTrim);
+        fx_bar = Xdot(alpdTde);
 
         % Perturb the variables to get the Jacobian matrix
         for k = 1:length(x_bar)
@@ -85,26 +82,25 @@ function aircraft = TrimTest(aircraft)
                 U_new(k-1) = x_bar(k) + delta(k);
             end
             
-            % Determine the state rate vector for the perturbed state
-            % and input vectors
+            % State rate vector for the perturbed state and input vectors
             Xdot_new = TrimStateRates(X_new, U_new, aircraft);
 
-            % Place in the 'k' column of the Jacobian matrix
-            J(:, k) = (Xdot_new(iTrim) - Xdot(iTrim))./(delta(k));
+            % Build Jacobian
+            J(:, k) = (Xdot_new(alpdTde) - Xdot(alpdTde))./(delta(k));
         end
         
-        % Update the x_bar vector
+        % Update x_bar
         x_bar_new = x_bar - J\fx_bar;
         
         % Determine error
         error = abs((x_bar_new - x_bar)./delta);
         
-        % Check if convergance condition is satisfied
+        % Check if solution has converged
         if max(error) < tol
             converged = true;
         end
         
-        % Check if iteration limit is reached
+        % Check for the iteration limit
         if iterCount > iterLim
             warning('Trim iteration limit reached')
             break
