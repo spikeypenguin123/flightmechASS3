@@ -9,109 +9,98 @@ function aircraft = Trim(aircraft)
     control_min = aircraft.control_limits.Lower;    % Control surface min limit
     control_max = aircraft.control_limits.Upper;    % Control surface max limit
     X0 = PullState(aircraft);	% Pull state variables into a 13x1 vector
-    
-    % Indexs for u, w and q in the state vector
-    uwq = [1 3 5];
-    
+    uwq = [1 3 5];  % Indexs for u, w and q in the state vector
+
     % Aircraft velocity (m/s)
     V = sqrt(X0(1).^2 + X0(2).^2 + X0(3).^2);
     
     % Dynamic Pressure (kPa)
     [~, Q] = FlowProperties(aircraft, V);
     
-    % Lift coefficient
+    % Estimate CL (lift coefficient)
     CL = m*g/(Q*S);
     
-    % Set an initial estimate for control vector and the AoA
-    alpha0 = (CL - CL0)/CLa;
-    dT0 = 0.5;
-    de0 = 0;
-    da0 = 0;
-    dr0 = 0;
-    % Create the control vector
-    U0 = [dT0; de0; da0; dr0]; 
+    alpha0 = (CL - CL0)/CLa;    % Estimate for current AoA (rad)
+    dT0 = 0.5;                  % Initial Thrust    (Newtons)
+    de0 = 0;                    % Initial Elevator  (rad)
+    da0 = 0;                    % Initial Aileron   (rad)
+    dr0 = 0;                    % Initial Rudder    (rad)
+    U0 = [dT0;de0;da0;dr0];     % Initial Control Vector
 
     % Make Empty Jacobian for speed
     J = zeros(3);
     
-    % Define perturbation increment
-    delta = 1e-6;
-    
     % Define the xbar vector, i.e. the values to be perturbed
-    x_bar = [alpha0; U0(1); U0(2)];
+    xbar0 = [alpha0; U0(1); U0(2)];
     
     % Initialise convergance boolean and tolerance
-    converged = false;
-    tol = 1e-10;
-    maxIter = 500;
-    n = 1;
-    
+    converged = false;  % Convergence checker
+    tol = 10e-10;       % Error tolerance
+    err = 1;            % Intitialise Error
+    maxIter = 500;      % Number of iterations
+    n = 1;              % Intitialise Iteration counter
+    delta = 1e-6;       % Perturbation Size
+
     % Numerical Newton-Ralphson method to solve for control inputs
     while ~converged      
         
-        % Determine the aircraft pitch
+        % Determine the aircraft pitch (slide 19 Week 9B)
         euler_att = q2e(X0(7:10));
-        euler_att(2) = x_bar(1);
+        euler_att(2) = xbar0(1);
         X0(7:10) = e2q(euler_att);
         
         % Normalise the quaternion
         X0(7:10) = X0(7:10)/norm(X0(7:10));
           
-        % Determine the state rate vector
-        Xdot = TrimStateRates(X0, U0, aircraft);
-        fx_bar = Xdot(uwq);
+        % State Rate
+        Xd0 = TrimStateRates(X0, U0, aircraft);
+
+        % Non-linear Function f(x) = [udot;wdot;qdot]
+        fxbar = Xd0(uwq);
 
         % Perturb the variables to get the Jacobian matrix
-        for k = 1:length(x_bar)
+        for i = 1:3
             
             % Initialise the state and input vector to be trimmed
-            Xnew = X0;
-            Unew = U0;
+            X = X0;
+            U = U0;
             
             % For the perturbation of alpha
-            if k == 1
-                
-                % Perturbation of alpha, which affects u and w in the
-                % state vector
-                Xnew(1) = V*cos(x_bar(k) + delta);
-                Xnew(3) = V*sin(x_bar(k) + delta);
-               
-            % For the perturbations of inputs
+            if i == 1
+                alphaPert = xbar0(i) + delta;   % Perturb alpha
+                X(1) = V*cos(alphaPert);        % u: x-vel update
+                X(3) = V*sin(alphaPert);        % w: z-vel update
             else
-                
-                % Perturbation of the input vector, delta_t and
-                % delta_e
-                Unew(k-1) = x_bar(k) + delta;
+                % Perturb Throttle and elevator
+                U(i-1) = xbar0(i) + delta;
             end
             
-            % State rate vector for the perturbed state and input vectors
-            Xdot_new = TrimStateRates(Xnew, Unew, aircraft);
+            % Update state rates 
+            Xd = TrimStateRates(X, U, aircraft);
 
             % Build Jacobian
-            J(:, k) = (Xdot_new(uwq) - Xdot(uwq))./(delta);
+            J(:, i) = (Xd(uwq) - Xd0(uwq))./(delta);
         end
         
         % Update x_bar
-        x_bar_new = x_bar - J\fx_bar;
+        xbar = xbar0 - J\fxbar;
         
         % Determine error
-        error = abs((x_bar_new - x_bar)./delta);
+        err = abs((xbar - xbar0)./delta);
         
         % Check if solution has converged
-        if max(error) < tol
+        if max(err) < tol
             converged = true;
         end
         
-
-        
-        % Update the x_bar vector
-        x_bar = x_bar_new;
+        % Update the x_bar vector storing alpha, dT and de
+        xbar0 = xbar;
         
         % Update the state and input vectors
-        X0(1) = V*cos(x_bar(1));
-        X0(3) = V*sin(x_bar(1));
-        U0(1) = x_bar(2);
-        U0(2) = x_bar(3);
+        X0(1) = V*cos(xbar0(1));
+        X0(3) = V*sin(xbar0(1));
+        U0(1) = xbar0(2);
+        U0(2) = xbar0(3);
         
 %       Aircraft control limits
         if any(U0 > control_max) || any(U0 < control_min)

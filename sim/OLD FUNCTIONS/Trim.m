@@ -45,7 +45,7 @@ function aircraft = Trim(aircraft)
     % Guess initial alpha and beta (these guesses were defined in Lec )
     alpha0 = 0; % (CL-CL0)/CLa;  % Estimate for current AoA (rad)
     dT0 = 0.1;              % Initial Thrust    (Newtons)
-    de0 = 0.1;                % Initial Elevator  (rad)
+    de0 = 0.1;              % Initial Elevator  (rad)
     da0 = 0;                % Initial Aileron   (rad)
     dr0 = 0;                % Initial Rudder    (rad)
     U0 = [dT0;de0;da0;dr0]; % Initial Control Vector
