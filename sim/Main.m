@@ -49,11 +49,7 @@ end
 %% main loop
 
 % TODO: trim the aircraft
-aircraft = TrimTest(aircraft);
-
-aircraft.controls
-aircraft.trim
-return
+aircraft = Trim(aircraft);
 
 dx_prev = zeros(13);
 

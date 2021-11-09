@@ -4,7 +4,7 @@
 function [alpha, beta, V] = AeroAngles(X)
     
     % Velocity (m/s)
-    V = sqrt(X(1)^2 + X(2)^2 + X(3)^2);
+    V = sqrt(X(1).^2 + X(2).^2 + X(3).^2);
     
     % Calculate Angle of Attack, alpha (rad)
     alpha = atan(X(3)/X(1));

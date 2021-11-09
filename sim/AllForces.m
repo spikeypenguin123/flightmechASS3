@@ -18,6 +18,6 @@ function [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,angular_rat
     F_G = Gravity(aircraft.inertial.g,[X(7);X(8);X(9);X(10)],aircraft.inertial.m);
     
     % Thrust Forces
-    [Pmax, F_T] = PropForces(rho, V, aircraft.controls.delta_T, aircraft.prop);
+    [Pmax, F_T] = PropForces(rho, X(1), U(1), aircraft.prop);
 
 end
