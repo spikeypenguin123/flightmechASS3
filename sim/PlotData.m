@@ -9,7 +9,7 @@ function PlotData(vectors,t)
     figsize2 = [posx+lenx posy+leny*1.25 lenx leny];
     figsize3 = [posx posy lenx leny];
     figsize4 = [posx+lenx posy lenx leny];
-    figsize5 = [posx posy lenx, leny];
+    figsize5 = [posx+(lenx*0.5) posy+(leny*0.5) lenx, leny];
     
     % Extract Data 
     X = vectors.state;
@@ -122,19 +122,19 @@ function PlotData(vectors,t)
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('\delta_{T}, (fraction)','FontName','Latex');
     subplot(2,2,2)
-    plot(t,U(2,:),'k-','LineWidth',2);
+    plot(t,rad2deg(U(2,:)),'k-','LineWidth',2);
     grid minor
     title('Elevator','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('\delta_{e}, (deg)','FontName','Latex');
     subplot(2,2,3)
-    plot(t,U(3,:),'k-','LineWidth',2);
+    plot(t,rad2deg(U(3,:)),'k-','LineWidth',2);
     grid minor
     title('Aileron','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('\delta_{a}, (deg)','FontName','Latex');
     subplot(2,2,4)
-    plot(t,U(4,:),'k-','LineWidth',2);
+    plot(t,rad2deg(U(4,:)),'k-','LineWidth',2);
     grid minor
     title('Rudder','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
