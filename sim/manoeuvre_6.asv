@@ -38,6 +38,7 @@ g = Inertial.g;
 m = Inertial.m;
 eta = Prop.eta;
 Pmax_SL = Prop.P_max;
+S = Geom.S; % wing area
 
 % Flight characteristics
 W = m*g;
@@ -68,24 +69,33 @@ CL = (2*L)/(rho*(V^2)*S);
 %% Q1
 % Bank angle, Aileron Deflection, Rudder Deflection to maintain a
 % steady-heading sideslip
-A = [CL,0,FD.Aero.CYdr;
-    0,FD.Aero.Clda,FD.Aero.Cldr;
-    0,FD.Aero.Cnda,FD.Aero.Cndr];
-
-y = -[FD.Aero.CYb;FD.Aero.Clb;FD.Aero.Cnb].*beta;
+% A = [CL,0,FD.Aero.CYdr;
+%     0,FD.Aero.Clda,FD.Aero.Cldr;
+%     0,FD.Aero.Cnda,FD.Aero.Cndr];
+% 
+% y = -[FD.Aero.CYb;FD.Aero.Clb;FD.Aero.Cnb].*beta;
+A = [Cyda Cydr CL;
+     Clda Cldr 0;
+     Cnda Cndr 0];
+b = -beta.*[Cyb ; Clb ; Cnb];
 
 % Solve for the bank angle, da, dr
-x = linsolve(A,y);
+x = A\b;       % x = linsolve(A,b);
 
 % Then the aileron deflection 
-phi= x(1);
-da = x(2);
-dr = x(3);
+da = x(1);
+dr = x(2);
+phi = x(3);
 
 % Print for Question 1
-fprintf('Question 1 for sideslip of %2.2f deg:\n',rad2deg(beta));
+disp('-------------------');
+fprintf('Equilibrium state controls for Case 6 sideslip of %2.2f deg:\n',rad2deg(beta));
 fprintf('phi = %2.3f (deg) \n', rad2deg(phi));
 fprintf('delta_a = %2.3f (deg) \n', rad2deg(da));
 fprintf('delta_r = %2.3f (deg) \n\n', rad2deg(dr));
 
 
+% Control_GUI
+
+% save test.mat
+save('StepOnBall.mat','U_filter')
