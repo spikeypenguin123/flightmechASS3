@@ -155,7 +155,7 @@ for cg = ["CG1", "CG2"]
         NTb = 0; % Assumed zero for simplicity according to lecture 8B
         
         % Longitudinal State Matrix 
-        % alpha form
+        % w form
         e_lona = eig(Lona.A_Lon);
         [omega_lona, zeta_lona] = damp(e_lona);
         disp('Alpha form matrix: ');
@@ -325,7 +325,7 @@ for cg = ["CG1", "CG2"]
             hold off
             
             figure(3)
-            plot(Time,rad2deg(X_lon(2,:))) % alpha
+            plot(Time,rad2deg(X_lon(2,:))./u1) % alpha
             hold on
             plot(Time,rad2deg(X_lon(4,:))) % theta
             grid on; grid minor; box on
