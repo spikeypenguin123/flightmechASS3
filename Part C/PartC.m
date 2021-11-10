@@ -27,7 +27,7 @@ mat1 = load('Longitudinal_Matrices_PC9_nominalCG1_100Kn_1000ft.mat');
 mat2 = load('Longitudinal_Matrices_PC9_nominalCG1_180Kn_1000ft.mat');
 mat3 = load('Longitudinal_Matrices_PC9_CG2_100Kn_1000ft.mat');
 
-plotting = true; % Boolean for whether you want to plot or not
+plotting = false; % Boolean for whether you want to plot or not
 
 output.data_lon = [];
 output.data_lat = [];
