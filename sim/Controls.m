@@ -28,7 +28,7 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
                 delta_e = c(1) + delta_e;
             end
         case 6
-            load('Controls.mat');
+            load('StepOnBall.mat'); % steady heading sideslip requires the pilot to "step on the ball"
             c = controls(:,i);
             delta_T = c(1)+delta_T;
             delta_e = c(2)+delta_e;
