@@ -149,14 +149,13 @@ function PlotData(vectors,t)
     title('Vertical G-Force','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('G-Force','FontName','Latex');
-    
     figure('DefaultAxesFontSize',16,'Renderer', 'painters')
-    fig8 = figure(8);
-    plot(t, atan2d(X(2,:),X(1,:)), 'k-', 'LineWidth',2);
+    fig7 = figure(7);
+    plot(t, X(5,:).*X(1,:)/9.81 + 1, 'k-', 'LineWidth',2);
     grid minor
-    title('Angle of Attack','FontName','Latex');
+    title('Vertical G-Force','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
-    ylabel('AoA (deg)','FontName','Latex');
+    ylabel('G-Force','FontName','Latex');
     % Save Figures to a folder
 %     if saveMode
 %         

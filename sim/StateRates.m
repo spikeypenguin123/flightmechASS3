@@ -41,7 +41,6 @@ function Xd = StateRates(aircraft, X, U, angular_rates)
     
     % Forces 
     [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,angular_rates);
-    
 
     % Velocity time derivatives
     F_x = F_B(1);

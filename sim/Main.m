@@ -26,15 +26,15 @@ addpath('Controls');
 
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 2; % 1->8
-CONFIG.CG = "CG2"; % CG1, CG2
+CONFIG.flight_plan = 7; % 1->8
+CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 180; % 100, 180
 CONFIG.visualise = true; % bool
-CONFIG.plot = false; % bool
+CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this
-CONFIG.t_step = 0.02;
-CONFIG.t_end = 20;
+CONFIG.t_step = 0.1;
+CONFIG.t_end = 25;
 CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
 
 %% Inititalise
@@ -47,7 +47,7 @@ if CONFIG.visualise
         aircraft.state.z_e, true, 1); 
     else
         visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
-        aircraft.state.z_e, true, CONFIG.V/3); 
+        aircraft.state.z_e, true, CONFIG.V/10); 
     end
 end
 
