@@ -25,8 +25,9 @@ pos = [500 200 800 550];
          % Part F - which flight phase is the aircraft in
          % Lateral Handling Level for part F dependent on how to identify
          % modes in lateral case
-         % Is Phugoid mode independent of category
-         % How to implement phugoid mode
+         % Is Phugoid mode independent of category - how to implement?
+         % How to do roll mode and spiral mode in last part
+
 
 % load helper functions from flight sim
 addpath('../sim')
@@ -35,7 +36,7 @@ mat1 = load('Longitudinal_Matrices_PC9_nominalCG1_100Kn_1000ft.mat');
 mat2 = load('Longitudinal_Matrices_PC9_nominalCG1_180Kn_1000ft.mat');
 mat3 = load('Longitudinal_Matrices_PC9_CG2_100Kn_1000ft.mat');
 
-plotting = false; % Boolean for whether you want to plot or not
+plotting = true; % Boolean for whether you want to plot or not
 
 output.data_lon = [];
 output.data_lat = [];
@@ -192,55 +193,62 @@ for cg = ["CG1", "CG2"]
 
         
         
-        %% Part B
-        disp([newline,'Part B']);
-        
-        eig_lona = []; eig_latb = [];
-        w_lona = []; z_lona = [];
-        w_latb = []; z_latb = [];
-        
-        % Getting complex eigenvalues for longitudinal case
-        for i = 1:length(e_lona)
-            if isreal(e_lona(i)) == 0
-                eig_lona = [eig_lona e_lona(i)];
-                w_lona = [w_lona abs(omega_lona(i))];
-                z_lona = [z_lona abs(zeta_lona(i))];
-            end
-        end
-        
-        disp('Longitudinal Modes of motion')
+        %% Part B   -- Check for positive values
+        disp([newline,'Part B']);       
+
+        disp('Longitudinal Modes of motion');
         % Checking if it is a short period mode, phugoid mode
-        for i = 1:length(w_lona)
-            if w_lona(i) >= 1 && w_lona(i) <= 6 && z_lona(i) >= 0.5 && z_lona(i) <= 0.8
-                disp(['Eigenvalue: ', num2str(eig_lona(i)),' |', ' Omega: ', num2str(w_lona(i)),' |', ...
-                    ' Zeta: ', num2str(z_lona(i)), ' |', ' Mode: SPM']);
-                w_SPM = w_lona(i);
-                z_SPM = z_lona(i);
-            elseif w_lona(i) >= 0.1 && w_lona(i) <= 0.6
-                disp(['Eigenvalue: ', num2str(eig_lona(i)),' |', ' Omega: ', num2str(w_lona(i)),' |', ...
-                    ' Zeta: ', num2str(z_lona(i)), ' |', ' Mode: Phugoid']);
-                w_Phu = w_lona(i);
-                z_Phu = z_lona(i);
+        % Index position
+        % idx 1 = u
+        % idx 2 = alpha
+        % idx 3 = q
+        % idx 4 = theta 
+        % idx 5 = ze
+        for i = 1:length(omega_lona)
+            if isreal(e_lona(i)) == 0
+                if omega_lona(i) >= 1 && omega_lona(i) <= 6 && zeta_lona(i) >= 0.5 && zeta_lona(i) <= 0.8
+                    disp(['State: ', num2str(i), ' |', ' SPM', ' |', ' Eig: ' ...
+                        num2str(e_lona(i)), ' |',' Omega: ', num2str(omega_lona(i)), ' |', ' Zeta: ', num2str(zeta_lona(i))]);
+                    w_SPM = omega_lona(i);
+                    z_SPM = zeta_lona(i);
+                elseif omega_lona(i) >= 0.1 && omega_lona(i) <= 0.6
+                    disp(['State: ', num2str(i), ' |', ' Phugoid', ' |', ' Eig: ' ...
+                        num2str(e_lona(i)),' |', ' Omega: ', num2str(omega_lona(i)), ' |', ' Zeta: ', num2str(zeta_lona(i))]);
+                    w_Phu = omega_lona(i);
+                    z_Phu = zeta_lona(i);
+                end
             else
-                disp(['Eigenvalue: ', num2str(eig_lona(i)),' |', ' Omega: ', num2str(w_lona(i)),' |', ...
-                    ' Zeta: ', num2str(z_lona(i)), ' |', ' Mode: Altitude Convergence/Divergence']);
+                disp(['State: ', num2str(i), ' |', ' Altitude con/div', ' |', ' Eig: ' ...
+                        num2str(e_lona(i)),' |', ' Omega: ', num2str(omega_lona(i)), ' |', ' Zeta: ', num2str(zeta_lona(i))]);
             end
-        end
-        
-        % Getting complex eigenvalues for lateral case
-        for i = 1:length(e_latb)
-            if isreal(e_latb(i)) == 0
-                eig_latb = [eig_latb e_latb(i)];
-                w_latb = [w_latb abs(omega_latb(i))];
-                z_latb = [z_latb abs(zeta_latb(i))];
-            end
-        end
+        end 
                     
-%         disp([newline, 'Lateral Modes of Motion']);
+        disp([newline, 'Lateral Modes of Motion']);
         % Checking if it is a roll mode, dutch roll mode or spiral mode
-%         for i = 1:length(w_latb)
-%                 
-%         end
+        % Index position
+        % idx 1 = beta
+        % idx 2 = p
+        % idx 3 = r
+        % idx 4 = phi 
+        % idx 5 = psi
+        for i = 1:length(omega_latb)
+            if isreal(e_latb(i)) == 0
+                disp(['State: ', num2str(i), ' |',' Dutch Roll',  ' |', ' Eig: ' ...
+                        num2str(e_latb(i)),' |', ' Omega: ', num2str(omega_latb(i)), ' |', ' Zeta: ', num2str(zeta_latb(i))]);
+                z_DR = zeta_latb(i);
+                w_DR = omega_latb(i);
+            elseif zeta_latb(i) == -1
+                disp(['State: ', num2str(i), ' |',' Spiral Mode',  ' |', ' Eig: ' ...
+                        num2str(e_latb(i)),' |', ' Omega: ', num2str(omega_latb(i)), ' |', ' Zeta: ', num2str(zeta_latb(i))]);
+                z_SM = zeta_latb(i);
+                w_DR = omega_latb(i);
+            elseif zeta_latb(i) == 1
+                disp(['State: ', num2str(i), ' |',' Roll Mode',  ' |', ' Eig: ' ...
+                        num2str(e_latb(i)),' |', ' Omega: ', num2str(omega_latb(i)), ' |', ' Zeta: ', num2str(zeta_latb(i))]);
+                z_RM = zeta_latb(i);
+                w_RM = omega_latb(i);
+            end
+        end
         
         %% Part C
 %         disp([newline,'Part C']);
@@ -298,39 +306,81 @@ for cg = ["CG1", "CG2"]
             % Longitudinal Case
             figure(1)
             plot(Time,X_lon(1,:)) % u
-            hold on
-            plot(Time,rad2deg(X_lon(2,:))) % alpha
-            plot(Time,X_lon(3,:)) % q
-            plot(Time,rad2deg(X_lon(4,:))) % theta
-            plot(Time,X_lon(5,:)) % ze
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
-%             ylabel('','Interpreter','latex')
+            ylabel('$\frac{m}{s}$','Interpreter','latex')
             set(gca,'FontSize',fsz)
             set(gcf,'Position',pos)
-            leg = legend('u','$\alpha$','q','$\theta$','$z_{e}$',...
+            saveas(gcf,['Longitudinal_vel_' + cg + '@' + num2str(speed) + 'kts' + '_dT' + num2str(rad2deg(def(1))) + 'de' + num2str(rad2deg(def(2))) + '.png']);
+            hold off
+            
+            figure(2)
+            plot(Time,rad2deg(X_lon(3,:))) % q
+            grid on; grid minor; box on
+            xlabel('Time (s)','Interpreter','latex')
+            ylabel('$\frac{deg}{s}$','Interpreter','latex')
+            set(gca,'FontSize',fsz)
+            set(gcf,'Position',pos)
+            saveas(gcf,['Longitudinal_rates_' + cg + '@' + num2str(speed) + 'kts' + '_dT' + num2str(rad2deg(def(1))) + 'de' + num2str(rad2deg(def(2))) + '.png']);
+            hold off
+            
+            figure(3)
+            plot(Time,rad2deg(X_lon(2,:))) % alpha
+            hold on
+            plot(Time,rad2deg(X_lon(4,:))) % theta
+            grid on; grid minor; box on
+            xlabel('Time (s)','Interpreter','latex')
+            ylabel('deg','Interpreter','latex')
+            set(gca,'FontSize',fsz)
+            set(gcf,'Position',pos)
+            leg = legend('$\alpha$','$\theta$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + dT + num2str(def(1)) + de + num2str(def(2)) + '.png']);
+            saveas(gcf,['Longitudinal_angles_' + cg + '@' + num2str(speed) + 'kts' + '_dT' + num2str(rad2deg(def(1))) + 'de' + num2str(rad2deg(def(2))) + '.png']);
+            hold off
+            
+            figure(4)
+            plot(Time,rad2deg(X_lon(5,:))) % ze
+            grid on; grid minor; box on
+            xlabel('Time (s)','Interpreter','latex')
+            ylabel('m','Interpreter','latex')
+            set(gca,'FontSize',fsz)
+            set(gcf,'Position',pos)
+            saveas(gcf,['Longitudinal_pos_' + cg + '@' + num2str(speed) + 'kts' + '_dT' + num2str(rad2deg(def(1))) + 'de' + num2str(rad2deg(def(2))) + '.png']);
             hold off
 
+            %-------------------------------------------------------%
+            
             % Lateral Case
-            figure(2)
+            figure(5)
             plot(Time,rad2deg(X_lat(1,:))) % beta
             hold on
-            plot(Time,X_lat(2,:)) % p 
-            plot(Time,X_lat(3,:)) % r
             plot(Time,rad2deg(X_lat(4,:))) % phi
             plot(Time,rad2deg(X_lat(5,:))) % psi
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
-%             ylabel('','Interpreter','latex')
+            ylabel('deg','Interpreter','latex')
             set(gca,'FontSize',fsz)
             set(gcf,'Position',pos)
-            leg = legend('$\beta$','p','r','$\phi$','$\psi$',...
+            leg = legend('$\beta$','$\phi$','$\psi$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Lateral' + cg + '@' + num2str(speed) + 'kts' + da + num2str(def(1)) + dr + num2str(def(2)) + '.png']);
+            saveas(gcf,['Lateral_angles_' + cg + '@' + num2str(speed) + 'kts' + '_da' + num2str(rad2deg(def(1))) + 'dr' + num2str(rad2deg(def(2))) + '.png']);
+            hold off
+            
+            figure(6)         
+            plot(Time,X_lat(2,:)) % p 
+            hold on
+            plot(Time,X_lat(3,:)) % r
+            grid on; grid minor; box on
+            xlabel('Time (s)','Interpreter','latex')
+            ylabel('$\frac{deg}{s}$','Interpreter','latex')
+            set(gca,'FontSize',fsz)
+            set(gcf,'Position',pos)
+            leg = legend('p','r',...
+                'Interpreter','latex','Orientation','Horizontal','Location','Best');
+            set(leg,'FontSize',leg_s);
+            saveas(gcf,['Lateral_rates_' + cg + '@' + num2str(speed) + 'kts' + '_da' + num2str(rad2deg(def(1))) + 'dr' + num2str(rad2deg(def(2))) + '.png']);
             hold off
             
         end
@@ -340,6 +390,7 @@ for cg = ["CG1", "CG2"]
 %         disp([newline,'Part E']);
         % Checking effect of control surfaces on the modes of motion
         % Probably have to vary the control inputs, just use part d
+        % Explanation
         
         
 
@@ -352,8 +403,7 @@ for cg = ["CG1", "CG2"]
         
         % PC9 - Class 1 Aircraft
         % Need to check with flight condition the PC9 is in
-        % Assume it is in cruise condition - Category B
-        % Could be category C
+        % At the moment checking all of them
         
         
         % Longitudinal - Modes: SPM, Phugoid
@@ -431,18 +481,56 @@ for cg = ["CG1", "CG2"]
         
         %-------------------------------------------------------------%
         
-        % Lateral - Modes: Dutch Mode, Roll Mode, Spiral Mode, Roll Rate
+        % Lateral - Modes: Dutch Mode, Roll Mode, Spiral Mode
         disp([newline, 'Lateral Case']);
         % Category A
         disp('Category A');
         
+        % Dutch Roll
+        if z_DR >= 0.19 && w_DR >= 1
+            disp('Duth Roll Handling: Level 1');
+        elseif z_DR >= 0.02 && z_DR*w_DR >= 0.05 && w_DR >= 0.4
+            disp('Dutch Roll Handling: Level 2');
+        elseif z_DR >= 0 && w_DR >= 0.4
+            disp('Dutch Roll Handling: Level 3');
+        end
+        
+        % Roll Mode - time constant
+        
+        % Spiral Mode - Bank angle disturbance
         
         % Category B
         disp([newline, 'Category B']);
         
+        % Dutch Roll
+        if z_DR >= 0.08 && z_DR*w_DR >= 0.15 && w_DR >= 4
+            disp('Duth Roll Handling: Level 1');
+        elseif z_DR >= 0.02 && z_DR*w_DR >= 0.05 && w_DR >= 0.4
+            disp('Dutch Roll Handling: Level 2');
+        elseif z_DR >= 0 && w_DR >= 0.4
+            disp('Dutch Roll Handling: Level 3');
+        end
+        
+        % Roll Mode - time constant
+        
+        % Spiral Mode - Bank angle disturbance
+        
         
         % Category C
         disp([newline, 'Category C']);
+        
+        % Dutch Roll
+        if z_DR >= 0.08 && z_DR*w_DR >= 0.05 && w_DR >= 1
+            disp('Duth Roll Handling: Level 1');
+        elseif z_DR >= 0.02 && z_DR*w_DR >= 0.05 && w_DR >= 0.4
+            disp('Dutch Roll Handling: Level 2');
+        elseif z_DR >= 0 && w_DR >= 0.4
+            disp('Dutch Roll Handling: Level 3');
+        end
+        
+        % Roll Mode - time constant
+        
+        % Spiral Mode - Bank angle disturbance
         
         
         disp([newline, '------------------------------------']);
