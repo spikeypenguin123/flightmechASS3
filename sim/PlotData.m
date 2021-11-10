@@ -39,7 +39,7 @@ function PlotData(vectors,t)
     subplot(4,1,4)
     plot(t,V,'k-','LineWidth',2);
     grid minor
-    title('V','Interpreter','Latex');
+    title('V','Fontname','Latex');
     han=axes(fig2,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
@@ -152,11 +152,21 @@ function PlotData(vectors,t)
     
     figure('DefaultAxesFontSize',16,'Renderer', 'painters')
     fig8 = figure(8);
-    plot(t, atan2d(X(2,:),X(1,:)), 'k-', 'LineWidth',2);
+    plot(t, atan2d(X(3,:),X(1,:)), 'k-', 'LineWidth',2); % was v/u but fixed it to w/u
     grid minor
     title('Angle of Attack','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('AoA (deg)','FontName','Latex');
+    
+    figure('DefaultAxesFontSize',16,'Renderer', 'painters')
+    fig9 = figure(9);
+    plot(t, asind(X(2,:)./V), 'k-', 'LineWidth',2); % asin(v/V)
+    grid minor
+    title('Sideslip, \beta','FontName','Latex');
+    xlabel('Time, (s)','Interpreter','Latex');
+    ylabel('\beta (deg)','FontName','Latex');
+    
+    
     % Save Figures to a folder
 %     if saveMode
 %         
