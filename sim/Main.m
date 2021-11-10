@@ -26,7 +26,7 @@ addpath('Controls');
 
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 7; % 1->8
+CONFIG.flight_plan = 5; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 180; % 100, 180
 CONFIG.visualise = true; % bool
