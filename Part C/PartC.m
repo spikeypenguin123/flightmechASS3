@@ -37,11 +37,23 @@ mat3 = load('Longitudinal_Matrices_PC9_CG2_100Kn_1000ft.mat');
 
 plotting = false; % Boolean for whether you want to plot or not
 
+output.data_lon = [];
+output.data_lat = [];
+
 % Go through each case
 for cg = ["CG1", "CG2"]
     for speed = [100, 180]
         if cg == "CG2" && speed == 180
             % we only do 3 cases so lets call it here
+                output.data_CG1_100_lon = [output.data_lon(:,1) real(output.data_lon(:,2:3))];
+                output.data_CG1_180_lon = [output.data_lon(:,4) real(output.data_lon(:,5:6))];
+                output.data_CG2_100_lon = [output.data_lon(:,7) real(output.data_lon(:,8:9))];
+
+                output.data_CG1_100_lat = [output.data_lat(:,1) real(output.data_lat(:,2:3))];
+                output.data_CG1_180_lat = [output.data_lat(:,4) real(output.data_lat(:,5:6))];
+                output.data_CG2_100_lat = [output.data_lat(:,7) real(output.data_lat(:,8:9))];
+
+                output.check = output.data_lon;
             return
         end
         disp("Case: " + cg + "@" + speed + "kts")
@@ -191,27 +203,27 @@ for cg = ["CG1", "CG2"]
         for i = 1:length(e_lona)
             if isreal(e_lona(i)) == 0
                 eig_lona = [eig_lona e_lona(i)];
-                w_lona = [w_lona omega_lona(i)];
-                z_lona = [z_lona zeta_lona(i)];
+                w_lona = [w_lona abs(omega_lona(i))];
+                z_lona = [z_lona abs(zeta_lona(i))];
             end
         end
         
         disp('Longitudinal Modes of motion')
         % Checking if it is a short period mode, phugoid mode
         for i = 1:length(w_lona)
-            if w_lona(i) > 1 && w_lona(i) < 6 && z_lona(i) > 0.5 && z_lona(i) < 0.8
+            if w_lona(i) >= 1 && w_lona(i) <= 6 && z_lona(i) >= 0.5 && z_lona(i) <= 0.8
                 disp(['Eigenvalue: ', num2str(eig_lona(i)),' |', ' Omega: ', num2str(w_lona(i)),' |', ...
-                    ' Mode: SPM']);
+                    ' Zeta: ', num2str(z_lona(i)), ' |', ' Mode: SPM']);
                 w_SPM = w_lona(i);
                 z_SPM = z_lona(i);
-            elseif w_lona(i) > 0.1 && w_lona(i) < 0.6
+            elseif w_lona(i) >= 0.1 && w_lona(i) <= 0.6
                 disp(['Eigenvalue: ', num2str(eig_lona(i)),' |', ' Omega: ', num2str(w_lona(i)),' |', ...
-                    ' Mode: Phugoid']);
+                    ' Zeta: ', num2str(z_lona(i)), ' |', ' Mode: Phugoid']);
                 w_Phu = w_lona(i);
                 z_Phu = z_lona(i);
             else
                 disp(['Eigenvalue: ', num2str(eig_lona(i)),' |', ' Omega: ', num2str(w_lona(i)),' |', ...
-                    ' Mode: Altitude Convergence/Divergence']);
+                    ' Zeta: ', num2str(z_lona(i)), ' |', ' Mode: Altitude Convergence/Divergence']);
             end
         end
         
@@ -219,8 +231,8 @@ for cg = ["CG1", "CG2"]
         for i = 1:length(e_latb)
             if isreal(e_latb(i)) == 0
                 eig_latb = [eig_latb e_latb(i)];
-                w_latb = [w_latb omega_latb(i)];
-                z_latb = [z_latb zeta_latb(i)];
+                w_latb = [w_latb abs(omega_latb(i))];
+                z_latb = [z_latb abs(zeta_latb(i))];
             end
         end
                     
@@ -299,7 +311,7 @@ for cg = ["CG1", "CG2"]
             leg = legend('u','$\alpha$','q','$\theta$','$z_{e}$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + '.png']);
+            saveas(gcf,['Longitudinal' + cg + '@' + num2str(speed) + 'kts' + dT + num2str(def(1)) + de + num2str(def(2)) + '.png']);
             hold off
 
             % Lateral Case
@@ -318,7 +330,7 @@ for cg = ["CG1", "CG2"]
             leg = legend('$\beta$','p','r','$\phi$','$\psi$',...
                 'Interpreter','latex','Orientation','Horizontal','Location','Best');
             set(leg,'FontSize',leg_s);
-            saveas(gcf,['Lateral' + cg + '@' + num2str(speed) + 'kts' + '.png']);
+            saveas(gcf,['Lateral' + cg + '@' + num2str(speed) + 'kts' + da + num2str(def(1)) + dr + num2str(def(2)) + '.png']);
             hold off
             
         end
@@ -434,6 +446,10 @@ for cg = ["CG1", "CG2"]
         
         
         disp([newline, '------------------------------------']);
+        
+        % Compiling data
+        output.data_lon = [output.data_lon e_lona omega_lona zeta_lona];
+        output.data_lat = [output.data_lat e_latb omega_latb zeta_latb];
         
     end
 end

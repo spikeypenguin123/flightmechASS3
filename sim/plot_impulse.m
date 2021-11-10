@@ -21,7 +21,7 @@ for cg = ["CG1","CG2"]
 for v = [100,180]   
 CONFIG = {};
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 3; % 1->8
+CONFIG.flight_plan = 1; % 1->8
 CONFIG.CG = cg; % CG1, CG2
 CONFIG.V = v; % 100, 180
 CONFIG.visualise = false; % bool
@@ -319,4 +319,47 @@ xlabel('x, (m)','Interpreter','Latex');
 ylabel('y (m)','Interpreter','Latex');
 legend(leg);
 
+
+figure
+set(gca, 'fontsize', 30)
+hold on
+plot(t,a_100_1.state(7,:),'LineWidth',2);
+plot(t,a_180_1.state(7,:),'LineWidth',2);
+plot(t,a_100_2.state(7,:),'LineWidth',2);
+plot(t,a_180_2.state(7,:),'LineWidth',2);
+grid minor
+% title('Displacement ($x_{e}$)');
+han.XLabel.Visible='on';
+han.YLabel.Visible='on';
+xlabel('Time, (s)','Interpreter','Latex');
+ylabel('Velocity, (m/s)','Interpreter','Latex');
+legend(leg);
+figure
+set(gca, 'fontsize', 30)
+hold on
+plot(t,a_100_1.state(8,:),'LineWidth',2);
+plot(t,a_180_1.state(8,:),'LineWidth',2);
+plot(t,a_100_2.state(8,:),'LineWidth',2);
+plot(t,a_180_2.state(8,:),'LineWidth',2);
+grid minor
+% title('Displacement ($y_{e}$)');
+han.XLabel.Visible='on';
+han.YLabel.Visible='on';
+xlabel('Time, (s)','Interpreter','Latex');
+ylabel('Velocity, (m/s)','Interpreter','Latex');
+legend(leg);
+figure
+set(gca, 'fontsize', 30)
+hold on
+plot(t,a_100_1.state(9,:),'LineWidth',2);
+plot(t,a_180_1.state(9,:),'LineWidth',2);
+plot(t,a_100_2.state(9,:),'LineWidth',2);
+plot(t,a_180_2.state(9,:),'LineWidth',2);
+grid minor
+% title('Altitude ($-z_{e}$)');
+han.XLabel.Visible='on';
+han.YLabel.Visible='on';
+xlabel('Time, (s)','Interpreter','Latex');
+ylabel('Velocity, (m/s)','Interpreter','Latex');
+legend(leg);
 
