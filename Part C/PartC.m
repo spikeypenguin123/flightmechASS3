@@ -149,7 +149,7 @@ for cg = ["CG1", "CG2"]
         % w form
         e_lon = eig(lon.A_Lon);
         [omega_lon, zeta_lon] = damp(e_lon);
-        disp('Alpha form matrix: ');
+        disp('w form matrix: ');
         disp('Eigenvalues of longitudinal motion: ');
         disp(num2str(e_lon));
         disp('Natural Frequency: ');
