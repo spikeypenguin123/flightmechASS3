@@ -18,16 +18,7 @@ pos = [500 200 800 550];
 
 %% Main Code
 
-% TO DO: % Conditions for lateral modes of motion
-         % Part D plotting ze
-         % Check initial conditions for euler integration
-         % Part E
-         % Part F - which flight phase is the aircraft in
-         % Lateral Handling Level for part F dependent on how to identify
-         % modes in lateral case
-         % Is Phugoid mode independent of category - how to implement?
-         % How to do roll mode and spiral mode in last part
-
+% TO DO: % Double check how to calculate time constant
 
 % load helper functions from flight sim
 addpath('../sim')
@@ -36,7 +27,7 @@ mat1 = load('Longitudinal_Matrices_PC9_nominalCG1_100Kn_1000ft.mat');
 mat2 = load('Longitudinal_Matrices_PC9_nominalCG1_180Kn_1000ft.mat');
 mat3 = load('Longitudinal_Matrices_PC9_CG2_100Kn_1000ft.mat');
 
-plotting = true; % Boolean for whether you want to plot or not
+plotting = false; % Boolean for whether you want to plot or not
 
 output.data_lon = [];
 output.data_lat = [];
@@ -66,11 +57,11 @@ for cg = ["CG1", "CG2"]
         end
         
         if cg == "CG1" && speed == 100
-            Lona = mat1;
+            lon = mat1;
         elseif cg == "CG1" && speed == 180
-            Lona = mat2;
+            lon = mat2;
         else
-            Lona = mat3;
+            lon = mat3;
         end
         
         % alt 1000ft
@@ -155,71 +146,77 @@ for cg = ["CG1", "CG2"]
         NTb = 0; % Assumed zero for simplicity according to lecture 8B
         
         % Longitudinal State Matrix 
-        % alpha form
-        e_lona = eig(Lona.A_Lon);
-        [omega_lona, zeta_lona] = damp(e_lona);
+        % w form
+        e_lon = eig(lon.A_Lon);
+        [omega_lon, zeta_lon] = damp(e_lon);
         disp('Alpha form matrix: ');
         disp('Eigenvalues of longitudinal motion: ');
-        disp(num2str(e_lona));
+        disp(num2str(e_lon));
         disp('Natural Frequency: ');
-        disp(num2str(omega_lona));
+        disp(num2str(omega_lon));
         disp('Damping Ratio: ');
-        disp(num2str(zeta_lona));
+        disp(num2str(zeta_lon));
         
         
         % Lateral State Matrices
         % Beta form
-        A_latb = [Yb/u1 Yp/u1 (Yr/u1 - 1) (g*cos(theta1))/u1 0 ;
+        A_lat = [Yb/u1 Yp/u1 (Yr/u1 - 1) (g*cos(theta1))/u1 0 ;
                  (Lb + A1*(Nb + NTb))/(1 - A1*B1) (Lp + A1*Np)/(1 - A1*B1) (Lr + A1*Nr)/(1 - A1*B1) 0 0 ;
                  (Nb + NTb + B1*Lb)/(1 - A1*B1) (Np + B1*Lp)/(1 - A1*B1) (Nr + B1*Lr)/(1 - A1*B1) 0 0 ;
                  0 1 tan(theta1) 0 0 ;
                  0 0 sec(theta1) 0 0 ];
-        B_latb = [Yda/u1 Ydr/u1 ; 
+        B_lat = [Yda/u1 Ydr/u1 ; 
                   ((Lda + A1*Nda)/(1 - A1*B1)) ((Ldr + A1*Ndr)/(1 - A1*B1)) ;
                   ((Nda + B1*Lda)/(1 - A1*B1)) ((Ndr + B1*Ldr)/(1 - A1*B1)) ; 
                   0 0 ;
                   0 0];
              
-        e_latb = eig(A_latb);
-        [omega_latb, zeta_latb] = damp(e_latb); % Need to double check
+        e_lat = eig(A_lat);
+        [omega_lat, zeta_lat] = damp(e_lat); % Need to double check
         disp([newline, 'Beta form matrix: ']);
         disp('Eigenvalues of lateral motion: ');
-        disp(num2str(e_latb));
+        disp(num2str(e_lat));
         disp('Natural Frequency: ');
-        disp(num2str(omega_latb));
+        disp(num2str(omega_lat));
         disp('Damping Ratio: ');
-        disp(num2str(zeta_latb));
+        disp(num2str(zeta_lat));
         
 
         
         
         %% Part B   -- Check for positive values
         disp([newline,'Part B']);       
+        
+        % Calculating time constants for Part F
+        tau_lon = 1./omega_lon;
+        tau_lat = 1./omega_lat;
 
         disp('Longitudinal Modes of motion');
         % Checking if it is a short period mode, phugoid mode
         % Index position
         % idx 1 = u
-        % idx 2 = alpha
+        % idx 2 = w
         % idx 3 = q
         % idx 4 = theta 
         % idx 5 = ze
-        for i = 1:length(omega_lona)
-            if isreal(e_lona(i)) == 0
-                if omega_lona(i) >= 1 && omega_lona(i) <= 6 && zeta_lona(i) >= 0.5 && zeta_lona(i) <= 0.8
+        for i = 1:length(omega_lon)
+            if isreal(e_lon(i)) == 0
+                if omega_lon(i) >= 1 && omega_lon(i) <= 6 && zeta_lon(i) >= 0.5 && zeta_lon(i) <= 0.8
                     disp(['State: ', num2str(i), ' |', ' SPM', ' |', ' Eig: ' ...
-                        num2str(e_lona(i)), ' |',' Omega: ', num2str(omega_lona(i)), ' |', ' Zeta: ', num2str(zeta_lona(i))]);
-                    w_SPM = omega_lona(i);
-                    z_SPM = zeta_lona(i);
-                elseif omega_lona(i) >= 0.1 && omega_lona(i) <= 0.6
+                        num2str(e_lon(i)), ' |',' Omega: ', num2str(omega_lon(i)), ' |', ' Zeta: ', num2str(zeta_lon(i))]);
+                    w_SPM = omega_lon(i);
+                    z_SPM = zeta_lon(i);
+                    tau_SPM = tau_lon(i);
+                elseif omega_lon(i) >= 0.1 && omega_lon(i) <= 0.6
                     disp(['State: ', num2str(i), ' |', ' Phugoid', ' |', ' Eig: ' ...
-                        num2str(e_lona(i)),' |', ' Omega: ', num2str(omega_lona(i)), ' |', ' Zeta: ', num2str(zeta_lona(i))]);
-                    w_Phu = omega_lona(i);
-                    z_Phu = zeta_lona(i);
+                        num2str(e_lon(i)),' |', ' Omega: ', num2str(omega_lon(i)), ' |', ' Zeta: ', num2str(zeta_lon(i))]);
+                    w_Phu = omega_lon(i);
+                    z_Phu = zeta_lon(i);
+                    tau_Phu = tau_lon(i);
                 end
             else
                 disp(['State: ', num2str(i), ' |', ' Altitude con/div', ' |', ' Eig: ' ...
-                        num2str(e_lona(i)),' |', ' Omega: ', num2str(omega_lona(i)), ' |', ' Zeta: ', num2str(zeta_lona(i))]);
+                        num2str(e_lon(i)),' |', ' Omega: ', num2str(omega_lon(i)), ' |', ' Zeta: ', num2str(zeta_lon(i))]);
             end
         end 
                     
@@ -231,22 +228,25 @@ for cg = ["CG1", "CG2"]
         % idx 3 = r
         % idx 4 = phi 
         % idx 5 = psi
-        for i = 1:length(omega_latb)
-            if isreal(e_latb(i)) == 0
+        for i = 1:length(omega_lat)
+            if isreal(e_lat(i)) == 0
                 disp(['State: ', num2str(i), ' |',' Dutch Roll',  ' |', ' Eig: ' ...
-                        num2str(e_latb(i)),' |', ' Omega: ', num2str(omega_latb(i)), ' |', ' Zeta: ', num2str(zeta_latb(i))]);
-                z_DR = zeta_latb(i);
-                w_DR = omega_latb(i);
-            elseif zeta_latb(i) == -1
+                        num2str(e_lat(i)),' |', ' Omega: ', num2str(omega_lat(i)), ' |', ' Zeta: ', num2str(zeta_lat(i))]);
+                z_DR = zeta_lat(i);
+                w_DR = omega_lat(i);
+                tau_DR = tau_lat(i);
+            elseif zeta_lat(i) == -1
                 disp(['State: ', num2str(i), ' |',' Spiral Mode',  ' |', ' Eig: ' ...
-                        num2str(e_latb(i)),' |', ' Omega: ', num2str(omega_latb(i)), ' |', ' Zeta: ', num2str(zeta_latb(i))]);
-                z_SM = zeta_latb(i);
-                w_DR = omega_latb(i);
-            elseif zeta_latb(i) == 1
+                        num2str(e_lat(i)),' |', ' Omega: ', num2str(omega_lat(i)), ' |', ' Zeta: ', num2str(zeta_lat(i))]);
+                z_SM = zeta_lat(i);
+                w_SM = omega_lat(i);
+                tau_SM = tau_lat(i);
+            elseif zeta_lat(i) == 1
                 disp(['State: ', num2str(i), ' |',' Roll Mode',  ' |', ' Eig: ' ...
-                        num2str(e_latb(i)),' |', ' Omega: ', num2str(omega_latb(i)), ' |', ' Zeta: ', num2str(zeta_latb(i))]);
-                z_RM = zeta_latb(i);
-                w_RM = omega_latb(i);
+                        num2str(e_lat(i)),' |', ' Omega: ', num2str(omega_lat(i)), ' |', ' Zeta: ', num2str(zeta_lat(i))]);
+                z_RM = zeta_lat(i);
+                w_RM = omega_lat(i);
+                tau_RM = tau_lat(i);
             end
         end
         
@@ -257,8 +257,8 @@ for cg = ["CG1", "CG2"]
         % Control deflection of 5 deg held for 0.5s and then returned to 0
         % deg
         
-        A_lona = Lona.A_Lon;
-        B_lona = Lona.B_Lon;
+        A_lon = lon.A_Lon;
+        B_lon = lon.B_Lon;
             
         % Conditions for Euler Integration
         T = 30;
@@ -266,7 +266,7 @@ for cg = ["CG1", "CG2"]
         Steps = T/dT;
         
         % States
-        % Longitudinal - [u alpha q theta z]
+        % Longitudinal - [u w q theta z]
         % Lateral - [beta p r phi psi]
         X_lon = [0 0 0 0 0]'; % Assigning intial values for states
         X_lat = [0 0 0 0 0]';
@@ -283,11 +283,11 @@ for cg = ["CG1", "CG2"]
             time = i*dT;
             
             if time >= 10 && time <= 10.5
-                Xdot_lon = A_lona*X_lon(:,i) + B_lona*def;
-                Xdot_lat = A_latb*X_lat(:,i) + B_latb*def;
+                Xdot_lon = A_lon*X_lon(:,i) + B_lon*def;
+                Xdot_lat = A_lat*X_lat(:,i) + B_lat*def;
             else
-                Xdot_lon = A_lona*X_lon(:,i) + B_lona*def_zero;  
-                Xdot_lat = A_latb*X_lat(:,i) + B_latb*def_zero;
+                Xdot_lon = A_lon*X_lon(:,i) + B_lon*def_zero;  
+                Xdot_lat = A_lat*X_lat(:,i) + B_lat*def_zero;
             end
             X_lon(:,i + 1) = X_lon(:,i) + dT*Xdot_lon;
             X_lat(:,i + 1) = X_lat(:,i) + dT*Xdot_lat;
@@ -298,10 +298,9 @@ for cg = ["CG1", "CG2"]
 %         disp([newline,'Part D']);
         
         % Time history and comparison with eigenvalues
+        Time = linspace(0,T,length(X_lon));
         
         if plotting == 1
-            
-            Time = linspace(0,T,length(X_lon));
             
             % Longitudinal Case
             figure(1)
@@ -325,7 +324,7 @@ for cg = ["CG1", "CG2"]
             hold off
             
             figure(3)
-            plot(Time,rad2deg(X_lon(2,:))) % alpha
+            plot(Time,rad2deg(X_lon(2,:))./u1) % w form but outputting alpha (using alpha = w/u1)
             hold on
             plot(Time,rad2deg(X_lon(4,:))) % theta
             grid on; grid minor; box on
@@ -340,7 +339,7 @@ for cg = ["CG1", "CG2"]
             hold off
             
             figure(4)
-            plot(Time,rad2deg(X_lon(5,:))) % ze
+            plot(Time,X_lon(5,:)) % ze
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
             ylabel('m','Interpreter','latex')
@@ -369,9 +368,9 @@ for cg = ["CG1", "CG2"]
             hold off
             
             figure(6)         
-            plot(Time,X_lat(2,:)) % p 
+            plot(Time,rad2deg(X_lat(2,:))) % p 
             hold on
-            plot(Time,X_lat(3,:)) % r
+            plot(Time,rad2deg(X_lat(3,:))) % r
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
             ylabel('$\frac{deg}{s}$','Interpreter','latex')
@@ -483,6 +482,20 @@ for cg = ["CG1", "CG2"]
         
         % Lateral - Modes: Dutch Mode, Roll Mode, Spiral Mode
         disp([newline, 'Lateral Case']);
+        
+        % Calculating time for bank angle disturbance to double for spiral
+        % mode condition - DOUBLE CHECK (using graph)
+        time_start = []; time_end = [];
+        for i = 1:length(X_lat(4,:))
+            if abs(X_lat(4,i)) >= (20*pi)/180
+                time_start = [time_start Time(i)];
+            end
+            if abs(X_lat(4,i)) >= (40*pi)/180
+                time_end = [time_end Time(i)];
+            end
+        end  
+        time_doubphi = time_end(1) - time_start(1);
+        
         % Category A
         disp('Category A');
         
@@ -496,8 +509,23 @@ for cg = ["CG1", "CG2"]
         end
         
         % Roll Mode - time constant
+        if tau_RM <= 1
+            disp('Roll Mode Handling: Level 1');
+        elseif tau_RM <= 1.4
+            disp('Roll Mode Handling: Level 2');
+        elseif tau_RM <= 10
+            disp('Roll Mode Handling: Level 3');
+        end
         
-        % Spiral Mode - Bank angle disturbance
+        % Spiral Mode - Bank angle disturbance 
+        if time_doubphi > 8 && time_doubphi <= 12
+            disp('Spiral Mode Handling: Level 1');
+        elseif time_doubphi > 4 && time_doubphi <= 8
+            disp('Spiral Mode Handling: Level 2');
+        elseif time_doubphi > 0 && time_doubphi <= 4
+            disp('Spiral Mode Handling: Level 3');
+        end
+
         
         % Category B
         disp([newline, 'Category B']);
@@ -512,8 +540,22 @@ for cg = ["CG1", "CG2"]
         end
         
         % Roll Mode - time constant
+        if tau_RM <= 1.4
+            disp('Roll Mode Handling: Level 1');
+        elseif tau_RM <= 3
+            disp('Roll Mode Handling: Level 2');
+        elseif tau_RM <= 10
+            disp('Roll Mode Handling: Level 3');
+        end
         
         % Spiral Mode - Bank angle disturbance
+        if time_doubphi > 8 && time_doubphi <= 20
+            disp('Spiral Mode Handling: Level 1');
+        elseif time_doubphi > 4 && time_doubphi <= 8
+            disp('Spiral Mode Handling: Level 2');
+        elseif time_doubphi > 0 && time_doubphi <= 4
+            disp('Spiral Mode Handling: Level 3');
+        end
         
         
         % Category C
@@ -529,15 +571,29 @@ for cg = ["CG1", "CG2"]
         end
         
         % Roll Mode - time constant
+        if tau_RM <= 1
+            disp('Roll Mode Handling: Level 1');
+        elseif tau_RM <= 1.4
+            disp('Roll Mode Handling: Level 2');
+        elseif tau_RM <= 10
+            disp('Roll Mode Handling: Level 3');
+        end
         
         % Spiral Mode - Bank angle disturbance
+        if time_doubphi > 8 && time_doubphi <= 12
+            disp('Spiral Mode Handling: Level 1');
+        elseif time_doubphi > 4 && time_doubphi <= 8
+            disp('Spiral Mode Handling: Level 2');
+        elseif time_doubphi > 0 && time_doubphi <= 4
+            disp('Spiral Mode Handling: Level 3');
+        end
         
         
         disp([newline, '------------------------------------']);
         
         % Compiling data
-        output.data_lon = [output.data_lon e_lona omega_lona zeta_lona];
-        output.data_lat = [output.data_lat e_latb omega_latb zeta_latb];
+        output.data_lon = [output.data_lon e_lon omega_lon zeta_lon];
+        output.data_lat = [output.data_lat e_lat omega_lat zeta_lat];
         
     end
 end
