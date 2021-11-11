@@ -5,8 +5,6 @@ function [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,angular_rat
     
     % AoA, sideslip and velocity
     [alpha, beta, V] = AeroAngles(X);
-    
-    beta
 
     [rho, ~] = FlowProperties(aircraft,V);
     

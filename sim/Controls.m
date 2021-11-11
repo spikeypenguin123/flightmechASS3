@@ -27,6 +27,14 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
                 c = controls(:,i);
                 delta_e = c(1) + delta_e;
             end
+        case 5
+            load('2gSideslipTurn.mat');
+            c = deg2rad(U_filter(:,i));
+            
+            delta_T = c(1)+delta_T;
+            delta_e = c(2)+delta_e;
+            delta_a = c(3)+delta_a;
+            delta_r = c(4)+delta_r;
         case 6
             load('StepOnBall.mat'); % steady heading sideslip requires the pilot to "step on the ball"
             c = deg2rad(U_filter(:,i));
@@ -48,15 +56,21 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
             delta_a = c(3);
             delta_r = c(4);
         case 8
-            if t <= 5
-                load('BarrelRollStage1.mat');
-                c = optimresults.x(:,i);
-                delta_T = c(1)+delta_T;
-                delta_e = c(2)+delta_e;
-                delta_a = deg2rad(7.5)+delta_a;
-                delta_r = c(4)+delta_r;
-            end
+%             if t <= 5
+%                 load('BarrelRollStage1.mat');
+%                 c = optimresults.x(:,i);
+%                 delta_T = c(1)+delta_T;
+%                 delta_e = c(2)+delta_e;
+%                 delta_a = deg2rad(7.5)+delta_a;
+%                 delta_r = c(4)+delta_r;
+%             end
+            load('BarrelRoll.mat');
+            c = deg2rad(U_filter(:,i));
             
+            delta_T = rad2deg(c(1))+delta_T;
+            delta_e = c(2)+delta_e;
+            delta_a = c(3)+delta_a;
+            delta_r = c(4)+delta_r;
             
         % TODO: cases 4-8
         otherwise
