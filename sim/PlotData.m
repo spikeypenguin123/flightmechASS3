@@ -22,7 +22,7 @@ function PlotData(vectors,t)
 %     plot(t,vectors.state(13,:));
     
     % Plot velocity (uvw)
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize1)
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters', 'Position', figsize1)
     fig2 = figure(2);
     subplot(4,1,1)
     plot(t,X(1,:),'k-','LineWidth',2);
@@ -47,30 +47,34 @@ function PlotData(vectors,t)
     ylabel(han,'Velocity, (m/s)','Interpreter','Latex');
     
     % Plot body rates (pqr) 
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize2)
-    fig3 = figure(3);
-    subplot(3,1,1)
-    plot(t,rad2deg(X(4,:)),'k-','LineWidth',2);
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters', 'Position', figsize2)
+    fig2 = figure(3);
+    subplot(4,1,1)
+    plot(t,X(1,:),'k-','LineWidth',2);
     grid minor
-    title('p','Fontname','Latex');
-    subplot(3,1,2)
-    plot(t,rad2deg(X(5,:)),'k-','LineWidth',2);
+    title('u','Fontname','Latex');
+    subplot(4,1,2)
+    plot(t,X(2,:),'k-','LineWidth',2);
     grid minor
-    title('q','Fontname','Latex');
-    subplot(3,1,3)
-    plot(t,rad2deg(X(6,:)),'k-','LineWidth',2);
+    title('v','Fontname','Latex');
+    subplot(4,1,3)
+    plot(t,X(3,:),'k-','LineWidth',2);
     grid minor
-    title('r','Fontname','Latex');
-    han=axes(fig3,'visible','off'); 
+    title('w','Fontname','Latex');
+    subplot(4,1,4)
+    plot(t,V,'k-','LineWidth',2);
+    grid minor
+    title('V','Interpreter','Latex');
+    han=axes(fig2,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
-    xlabel('Time, (s)','Interpreter','Latex');
-    ylabel('Body Rate, (deg/s)','Interpreter','Latex');
+    xlabel(han,'Time, (s)','Interpreter','Latex');
+    ylabel(han,'Velocity, (m/s)','Interpreter','Latex');
 
     
     % Plot attitude (phi,the,psi)
     euler = rad2deg(q2e(X(7:10,:))); % convert the quaternions to euler
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize3)
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters', 'Position', figsize3)
     fig4 = figure(4);
     subplot(3,1,1)
     plot(t,euler(1,:),'k-','LineWidth',2);
@@ -91,7 +95,7 @@ function PlotData(vectors,t)
     ylabel('Attitude, (deg)','Interpreter','Latex');
     
     % Plot position, Earth frame (xyz)
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize4)
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters', 'Position', figsize4)
     fig5 = figure(5);
     subplot(3,1,1)
     plot(t,X(11,:),'k-','LineWidth',2);
@@ -113,7 +117,7 @@ function PlotData(vectors,t)
     
     
     % Plot position, Earth frame (xyz)
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize5)
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters', 'Position', figsize5)
     fig6 = figure(6);
     subplot(2,2,1)
     plot(t,U(1,:),'k-','LineWidth',2);
@@ -142,7 +146,7 @@ function PlotData(vectors,t)
    
     
     % plot vertical g-force
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters')
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters')
     fig7 = figure(7);
     plot(t, X(5,:).*X(1,:)/9.81 + 1, 'k-', 'LineWidth',2);
     grid minor
@@ -150,7 +154,7 @@ function PlotData(vectors,t)
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('G-Force','FontName','Latex');
     
-    figure('DefaultAxesFontSize',16,'Renderer', 'painters')
+    figure('DefaultAxesFontSize',30,'Renderer', 'painters')
     fig8 = figure(8);
     plot(t, atan2d(X(2,:),X(1,:)), 'k-', 'LineWidth',2);
     grid minor
