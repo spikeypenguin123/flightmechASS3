@@ -1,4 +1,4 @@
-function PlotData(vectors,t)
+function PlotData(vectors,t,filename,save)
     
     % Settings 
     posx = 10;
@@ -45,6 +45,9 @@ function PlotData(vectors,t)
     han.YLabel.Visible='on';
     xlabel(han,'Time, (s)','Interpreter','Latex');
     ylabel(han,'Velocity, (m/s)','Interpreter','Latex');
+    if save == 1
+        saveas(gcf,['velocity_',filename,'.png']);
+    end
     
     % Plot body rates (pqr) 
     figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize2)
@@ -65,7 +68,10 @@ function PlotData(vectors,t)
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
     xlabel(han,'Time, (s)','Interpreter','Latex');
-    ylabel('Body Rate, (deg/s)','Interpreter','Latex');
+    ylabel(han,'Velocity, (m/s)','Interpreter','Latex');
+    if save == 1
+        saveas(gcf,['bodyrates_',filename,'.png']);
+    end
 
     
     % Plot attitude (phi,the,psi)
@@ -89,6 +95,9 @@ function PlotData(vectors,t)
     han.YLabel.Visible='on';
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('Attitude, (deg)','Interpreter','Latex');
+    if save == 1
+        saveas(gcf,['attitude_',filename,'.png']);
+    end
     
     % Plot position, Earth frame (xyz)
     figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize4)
@@ -110,6 +119,9 @@ function PlotData(vectors,t)
     han.YLabel.Visible='on';
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('Position, (m)','Interpreter','Latex');
+    if save == 1
+        saveas(gcf,['position_',filename,'.png']);
+    end
     
     
     % Plot position, Earth frame (xyz)
@@ -139,6 +151,9 @@ function PlotData(vectors,t)
     title('Rudder','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('\delta_{r}, (deg)','FontName','Latex');
+    if save == 1
+        saveas(gcf,['controls_',filename,'.png']);
+    end
    
     
     % plot vertical g-force
@@ -149,6 +164,9 @@ function PlotData(vectors,t)
 %     title('Vertical G-Force','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('G-Force','FontName','Latex');
+    if save == 1
+        saveas(gcf,['gforce_',filename,'.png']);
+    end
     
     figure('DefaultAxesFontSize',16,'Renderer', 'painters')
     fig8 = figure(8);
@@ -157,6 +175,9 @@ function PlotData(vectors,t)
 %     title('Angle of Attack','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
     ylabel('AoA (deg)','FontName','Latex');
+    if save == 1
+        saveas(gcf,['AoA_',filename,'.png']);
+    end
     
     figure('DefaultAxesFontSize',16,'Renderer', 'painters')
     fig9 = figure(9);

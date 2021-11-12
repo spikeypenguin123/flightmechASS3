@@ -130,7 +130,9 @@ end
 %% plots and analysis
 
 if CONFIG.plot
-    PlotData(aircraft.vectors, CONFIG.t);
+    % what you want to call the plots in input 3 and boolean to check
+    % whether you want to save plots or not in input 4
+    PlotData(aircraft.vectors, CONFIG.t, 'manouvere5', false);
 end
 
 
