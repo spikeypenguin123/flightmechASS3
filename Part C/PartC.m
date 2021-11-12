@@ -8,7 +8,7 @@ alw           = 1;                      % AxesLineWidth
 fsz           = 20;                     % Fontsize
 lw            = 1.4;                    % LineWidth
 msz           = 5;                      % MarkerSize
-leg_s         = 18;                     % Legend size
+leg_s         = 20;                     % Legend size
 set(0,'defaultLineLineWidth',lw);       % set the default line width to lw
 set(0,'defaultLineMarkerSize',msz);     % set the default line marker size to msz
 set(0,'defaultLineLineWidth',lw);       % set the default line width to lw
@@ -32,7 +32,7 @@ X1 = load('ICs_PC9_nominalCG1_100Kn_1000ft.mat');
 X2 = load('ICs_PC9_nominalCG1_180Kn_1000ft.mat');
 X3 = load('ICs_PC9_CG2_100Kn_1000ft.mat');
 
-plotting = false; % Boolean for whether you want to plot or not
+plotting = true; % Boolean for whether you want to plot or not
 
 output.data_lon = [];
 output.data_lat = [];
@@ -157,14 +157,14 @@ for cg = ["CG1", "CG2"]
         Nda = (Q*S*b*Cnda)/Izz;
         Lda = (Q*S*b*Clda)/Ixx;
         Nb = (Q*S*b*Cnb)/Izz;
-        Np = (Q*S*b^2*Cnp)/(2*Izz*u1);
-        Nr = (Q*S*Cydr)/(2*Izz*u1);
-        Ydr = (Q*S*b*Cndr)/Izz;
+        Np = (Q*S*(b^2)*Cnp)/(2*Izz*u1);
+        Nr = (Q*S*(b^2)*Cnr)/(2*Izz*u1);
+        Ydr = (Q*S*b*Cydr)/m;
         Ndr = (Q*S*b*Cndr)/Izz;
         Ldr = (Q*S*b*Cldr)/Ixx;
         Lb = (Q*S*b*Clb)/Ixx;
-        Lp = (Q*S*b^2*Clp)/(2*Ixx*u1);
-        Lr = (Q*S*b^2*Clr)/(2*Ixx*u1);
+        Lp = (Q*S*(b^2)*Clp)/(2*Ixx*u1);
+        Lr = (Q*S*(b^2)*Clr)/(2*Ixx*u1);
         NTb = 0; % Assumed zero for simplicity according to lecture 8B
         
         % Longitudinal State Matrix 
@@ -280,9 +280,9 @@ for cg = ["CG1", "CG2"]
         % deg
             
         % Conditions for Euler Integration
-        T = 80;
+        T = 50;
         time_def = 5; % Time at which 0.5 second deflection occurs
-        dT = 0.1;
+        dT = 0.01;
         Steps = T/dT;
         
         % States
@@ -294,7 +294,7 @@ for cg = ["CG1", "CG2"]
         % Control inputs
         % Longitudinal Case - Throttle and Elevator
         % Lateral Directional Case - Aileron and Rudder
-        def = [5 5]'*pi/180;
+        def = [-5 -5]'*pi/180;
         def_zero = [0 0]'*pi/180;
         
         % Longitudinal Case and Lateral-Directional Case
@@ -302,7 +302,7 @@ for cg = ["CG1", "CG2"]
             
             time = i*dT;
             
-            if time >= time_def && time <= time_def + 0.5
+            if time >= time_def && time <= (time_def + 0.5)
                 Xdot_lon = A_lon*X_lon(:,i) + B_lon*def;
                 Xdot_lat = A_lat*X_lat(:,i) + B_lat*def;
             else
@@ -509,12 +509,16 @@ for cg = ["CG1", "CG2"]
         for i = 1:length(X_lat(4,:))
             if abs(X_lat(4,i)) >= (20*pi)/180
                 time_start = [time_start Time(i)];
+            else
+                time_start = 0;
             end
             if abs(X_lat(4,i)) >= (40*pi)/180
                 time_end = [time_end Time(i)];
+            else
+                time_end = 0;
             end
         end  
-        time_doubphi = time_end(1) - time_start(1);
+        time_doubphi = abs(time_end(1) - time_start(1));
         
         % Category A
         disp('Category A');
@@ -538,11 +542,11 @@ for cg = ["CG1", "CG2"]
         end
         
         % Spiral Mode - Bank angle disturbance 
-        if time_doubphi > 8 && time_doubphi <= 12
+        if time_doubphi >= 12
             disp('Spiral Mode Handling: Level 1');
-        elseif time_doubphi > 4 && time_doubphi <= 8
+        elseif time_doubphi >= 8 && time_doubphi < 12
             disp('Spiral Mode Handling: Level 2');
-        elseif time_doubphi > 0 && time_doubphi <= 4
+        elseif time_doubphi >= 4 && time_doubphi < 8
             disp('Spiral Mode Handling: Level 3');
         end
 
@@ -568,12 +572,12 @@ for cg = ["CG1", "CG2"]
             disp('Roll Mode Handling: Level 3');
         end
         
-        % Spiral Mode - Bank angle disturbance
-        if time_doubphi > 8 && time_doubphi <= 20
+        % Spiral Mode - Bank angle disturbance 
+        if time_doubphi >= 20
             disp('Spiral Mode Handling: Level 1');
-        elseif time_doubphi > 4 && time_doubphi <= 8
+        elseif time_doubphi >= 8 && time_doubphi < 20
             disp('Spiral Mode Handling: Level 2');
-        elseif time_doubphi > 0 && time_doubphi <= 4
+        elseif time_doubphi >= 4 && time_doubphi < 8
             disp('Spiral Mode Handling: Level 3');
         end
         
@@ -599,12 +603,12 @@ for cg = ["CG1", "CG2"]
             disp('Roll Mode Handling: Level 3');
         end
         
-        % Spiral Mode - Bank angle disturbance
-        if time_doubphi > 8 && time_doubphi <= 12
+        % Spiral Mode - Bank angle disturbance 
+        if time_doubphi >= 12
             disp('Spiral Mode Handling: Level 1');
-        elseif time_doubphi > 4 && time_doubphi <= 8
+        elseif time_doubphi >= 8 && time_doubphi < 12
             disp('Spiral Mode Handling: Level 2');
-        elseif time_doubphi > 0 && time_doubphi <= 4
+        elseif time_doubphi >= 4 && time_doubphi < 8
             disp('Spiral Mode Handling: Level 3');
         end
         
