@@ -42,7 +42,7 @@ S = Geom.S; % wing area
 
 % Flight characteristics
 W = m*g;
-V = 100/1.944; % Speed at 100 knots in m/s
+V = 180/1.944; % Speed at 100 knots in m/s
 % Recalculate density
 rho_US = 0.9711*0.002377; % Density at 1000ft
 rho = rho_US*515;

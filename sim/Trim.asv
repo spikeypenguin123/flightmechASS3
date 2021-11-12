@@ -33,6 +33,7 @@ function aircraft = Trim(aircraft)
     xbar0 = [alpha0; U0(1); U0(2)];
     
     % Initialise convergance boolean and tolerance
+    convergence = false;    % Convergence checker
     tol = 10e-10;           % Error tolerance
     err = 1;                % Intitialise Error
     maxIter = 500;          % Number of iterations
@@ -43,7 +44,7 @@ function aircraft = Trim(aircraft)
     J = zeros(3);
     
     % Numerical Newton-Ralphson method to solve for control inputs
-    while max(err) >= tol      % Run until the error is sufficiently small and solution has convereged
+    while ~convergence      
         
         % Setting pitch to AoA (slide 19 Week 9B)
         euler_att = q2e(X0(7:10));
@@ -72,7 +73,7 @@ function aircraft = Trim(aircraft)
                 X(1) = V*cos(alphaPert);        % u: x-vel update
                 X(3) = V*sin(alphaPert);        % w: z-vel update
             else
-                % Perturb the Throttle and Elevator
+                % Perturb Throttle and elevator
                 U(i-1) = xbar0(i) + delta;
             end
             
@@ -89,18 +90,23 @@ function aircraft = Trim(aircraft)
         % Determine error
         err = abs((xbar - xbar0)./delta);
         
+        % Check if solution has converged
+        if max(err) < tol
+            convergence = true;
+        end
+        
         % Update the x_bar vector storing alpha, dT and de
         xbar0 = xbar;
-        
-        % Control Vector Update 
-        U0(1) = xbar0(2);
-        U0(2) = xbar0(3);
         
         % State Vector Update
         X0(1) = V*cos(xbar0(1));
         X0(3) = V*sin(xbar0(1));
 
-        % Aircraft control limits
+        % Control Vector Update 
+        U0(1) = xbar0(2);
+        U0(2) = xbar0(3);
+        
+%       Aircraft control limits
         if any(U0 > control_max) || any(U0 < control_min)
             disp('WARNING: THE THROTTLE OR ELEVATOR HAVE EXCEEDED LIMITS!')
         end

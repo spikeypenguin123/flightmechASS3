@@ -3,7 +3,7 @@ function PlotData(vectors,t)
     % Settings 
     posx = 10;
     posy = 50;
-    lenx = 800;
+    lenx = 650;
     leny = 400;
     figsize1 = [posx posy+leny*1.25 lenx leny*1.5];
     figsize2 = [posx+lenx posy+leny*1.25 lenx leny];
