@@ -21,8 +21,6 @@ function [aircraft] = Initialisation(cg,speed,debug)
     end
         
     % aircraft state
-    % currently the given data isn't how it's described in the PDF (12
-    % values instead of 13)
     aircraft.state = {};
     aircraft.state.u = X0(1);
     aircraft.state.v = X0(2);

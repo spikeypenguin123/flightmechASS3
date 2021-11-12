@@ -43,7 +43,7 @@ function Xdot = TrimStateRates(X, U, aircraft)
             break
         end
     
-        % Incriment iteration counter
+        % Increment iteration counter
         iterCount = iterCount + 1;
     end  
 end

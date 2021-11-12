@@ -1,5 +1,7 @@
 
 function X = PullState(aircraft)
+    % gets the state vector from the aircraft
+    
     X = zeros(13,1);                   % Initialise X0
     X(1)   = aircraft.state.u;         % (m/s)       
     X(2)   = aircraft.state.v;         % (m/s)       

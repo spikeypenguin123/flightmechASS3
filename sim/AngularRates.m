@@ -9,7 +9,6 @@ function angular_rates = AngularRates(X,Xd)
 u = X(1);
 v = X(2);
 w = X(3);
-% udot = Xd(1);
 vdot = Xd(2);
 wdot = Xd(3);
 

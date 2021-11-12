@@ -1,5 +1,5 @@
 function aircraft = PushState(X,U,aircraft)
-    % Pushing the state variables 
+    % Pushing the state variables to the aircraft
     aircraft.state.u        = X(1);     % (m/s)       
     aircraft.state.v        = X(2);     % (m/s)       
     aircraft.state.w        = X(3);     % (m/s)       

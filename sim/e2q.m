@@ -1,9 +1,6 @@
 function quaternions = e2q(eulers)
     % in: 3xn euler (rad)
     % out: 4xn quat
-
-%     % normalise to [0,2pi]
-%     eulers = eulers+(eulers<0).*(2*pi);
     
     phi = eulers(1,:);
     theta = eulers(2,:);

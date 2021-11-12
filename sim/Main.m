@@ -5,64 +5,48 @@ clc
 addpath('Aircraft');
 addpath('AircraftData');
 addpath('Visualiser');
-addpath('Control_GUI');
 addpath('Controls');
-
-% Run the control GUI
-% Control_GUI
-% Use the provided trim U0 in the GUI and save this
-% Will be loaded everytime you want to run that particular sim
-
-% the frequency for the filtered U0 can be a discussion point in the report
-
-% U_linear for the first 3
-% U_smoothed for the maneurvers 4-8 (dutch roll and spiral mode are exciting)
-
-
-%% Part C Task 1c is using the U_linear
-    % could also use the U_filter and compare for discussion
 
 %% Configure
 
+% array of simulation times per flight plan
+SIM_TIMES = [200 200 200 100 100 40 25 20];
+
 CONFIG = {};
+CONFIG.flight_plan = 4; % <--- change this to run different maneuvers. int,1-8
 CONFIG.debug = false; % bool
-CONFIG.flight_plan = 8; % 1->8
 CONFIG.CG = "CG1"; % CG1, CG2
 CONFIG.V = 180; % 100, 180
 CONFIG.visualise = true; % bool
 CONFIG.plot = true; % bool
 
 CONFIG.t_start = 0; % don't change this
-CONFIG.t_step = 0.1;
-CONFIG.t_end = 20;
+CONFIG.t_step = 0.1; % don't change this
+CONFIG.t_end = SIM_TIMES(CONFIG.flight_plan);
+
 CONFIG.t = CONFIG.t_start:CONFIG.t_step:CONFIG.t_end;
+
+disp("Running test case " + CONFIG.flight_plan + "for " + CONFIG.CG + "@" + CONFIG.V + "kts");
 
 %% Inititalise
 
 aircraft = Initialisation(CONFIG.CG, CONFIG.V, CONFIG.debug);
 
 if CONFIG.visualise
-    if CONFIG.flight_plan == 4
-        visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
-        aircraft.state.z_e, true, 1); 
-    else
-        visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
-        aircraft.state.z_e, true, CONFIG.V/10); 
-    end
+    visualiser = initialise_visualiser(aircraft.state.x_e, aircraft.state.y_e,...
+    aircraft.state.z_e, true, CONFIG.V/10); 
 end
 
 %% main loop
 
-% TODO: trim the aircraft
+% trim the aircraft
 aircraft = Trim(aircraft);
-
-dx_prev = zeros(13);
-
-% remove the below line once the Trim function is complete.
-% aircraft.controls = aircraft.trim;
 aircraft.trim = aircraft.controls;
 
-% dont remove this
+% initialise dx vector
+dx_prev = zeros(13);
+
+% save down initial state vector
 [~, control_vec, ~] = get_vectors(aircraft);
 aircraft.controls.vector = control_vec;
 
@@ -73,10 +57,10 @@ for t = CONFIG.t
             = Controls(CONFIG.flight_plan, t, i, aircraft.trim.delta_T,...
             aircraft.trim.delta_e, aircraft.trim.delta_a, aircraft.trim.delta_r);
         
-    %% alter the aircraft state here (do fancy calculations and integrations):
-    
+    % calculate the next state vector X
     [X, dx_prev] = Integrate(aircraft, CONFIG.t_step, dx_prev, CONFIG.debug);
     
+    % unpack the state
     aircraft.state.u        = X(1);     % (m/s)       
     aircraft.state.v        = X(2);     % (m/s)       
     aircraft.state.w        = X(3);     % (m/s)       
@@ -118,7 +102,6 @@ for t = CONFIG.t
         aircraft = save_vectors(aircraft);
     end
 
-    
     i=i+1;
 
 end
@@ -131,8 +114,8 @@ end
 
 if CONFIG.plot
     % what you want to call the plots in input 3 and boolean to check
-    % whether you want to save plots or not in input 4
-    PlotData(aircraft.vectors, CONFIG.t, 'manouvere5', false);
+    % whether you want to save plots to file or not in input 4
+    PlotData(aircraft.vectors, CONFIG.t, 'manouver5', false);
 end
 
 

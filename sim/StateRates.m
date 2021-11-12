@@ -22,7 +22,6 @@ function Xd = StateRates(aircraft, X, U, angular_rates)
     Izz = aircraft.inertial.Izz;
     Ixz = aircraft.inertial.Ixz;
     m = aircraft.inertial.m;
-    g = aircraft.inertial.g;
     
     % State
     u = X(1);
@@ -35,12 +34,9 @@ function Xd = StateRates(aircraft, X, U, angular_rates)
     q1 = X(8);
     q2 = X(9);
     q3 = X(10);
-    x_e = X(11);
-    y_e = X(12);
-    z_e = X(13);
     
     % Forces 
-    [CL, CD, F_B, M_B, F_G, F_T, Pmax] = AllForces(aircraft,X,U,angular_rates);
+    [~, ~, F_B, M_B, F_G, F_T, ~] = AllForces(aircraft,X,U,angular_rates);
 
     % Velocity time derivatives
     F_x = F_B(1);

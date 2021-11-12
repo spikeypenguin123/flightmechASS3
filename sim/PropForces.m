@@ -1,7 +1,4 @@
 function  [Pmax, Thrust] = PropForces(rho,u,delta_T,Prop)
-  
-% INPUT:
-% OUTPUT:
 
 % Computing Propulsion Fores
 
