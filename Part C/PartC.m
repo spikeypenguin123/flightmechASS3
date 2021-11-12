@@ -294,7 +294,7 @@ for cg = ["CG1", "CG2"]
         % Control inputs
         % Longitudinal Case - Throttle and Elevator
         % Lateral Directional Case - Aileron and Rudder
-        def = [-5 -5]'*pi/180;
+        def = [-10 -10]'*pi/180;
         def_zero = [0 0]'*pi/180;
         
         % Longitudinal Case and Lateral-Directional Case
