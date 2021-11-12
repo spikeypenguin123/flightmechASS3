@@ -4,7 +4,8 @@ clear
 % Manouvere 5 - Using Week 7B for balanced turn
 % Steady 2g zero-sideslip turn, from steady flight
 
-% addpath('sim\AircraftData');
+addpath('AircraftData');
+addpath('Control_GUI');
 FD = aero3560_LoadFlightDataPC9_nominalCG1();
 V = 180*0.51444;
 g = 9.81;
