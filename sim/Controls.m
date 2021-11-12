@@ -74,7 +74,7 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
             load('BarrelRoll.mat');
             c = deg2rad(U_filter(:,i));
             
-            delta_T = c(1)+delta_T;
+            delta_T = rad2deg(c(1))+delta_T;
             delta_e = c(2)+delta_e;
             delta_a = c(3)+delta_a;
             delta_r = c(4)+delta_r;
