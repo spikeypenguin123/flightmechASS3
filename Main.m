@@ -19,7 +19,7 @@ CONFIG = {};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CONFIG.flight_plan = 5; % <--- change this to run different maneuvers. int,1-8
 CONFIG.visualise = false; % <--- change this to turn on the visualiser. bool
-CONFIG.plot = true; % bool
+CONFIG.plot = true; % <-- change this to turn after-sim plotting on/off bool
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
