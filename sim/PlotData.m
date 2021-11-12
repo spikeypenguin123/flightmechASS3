@@ -48,28 +48,24 @@ function PlotData(vectors,t)
     
     % Plot body rates (pqr) 
     figure('DefaultAxesFontSize',16,'Renderer', 'painters', 'Position', figsize2)
-    fig2 = figure(3);
-    subplot(4,1,1)
-    plot(t,X(1,:),'k-','LineWidth',2);
+    fig3 = figure(3);
+    subplot(3,1,1)
+    plot(t,rad2deg(X(4,:)),'k-','LineWidth',2);
+    grid minor
+    title('p','Fontname','Latex');
+    subplot(3,1,2)
+    plot(t,rad2deg(X(5,:)),'k-','LineWidth',2);
+    grid minor
+    title('q','Fontname','Latex');
+    subplot(3,1,3)
+    plot(t,rad2deg(X(6,:)),'k-','LineWidth',2);
     grid minor
     title('u','Fontname','Latex');
-    subplot(4,1,2)
-    plot(t,X(2,:),'k-','LineWidth',2);
-    grid minor
-    title('v','Fontname','Latex');
-    subplot(4,1,3)
-    plot(t,X(3,:),'k-','LineWidth',2);
-    grid minor
-    title('w','Fontname','Latex');
-    subplot(4,1,4)
-    plot(t,V,'k-','LineWidth',2);
-    grid minor
-    title('V','Interpreter','Latex');
-    han=axes(fig2,'visible','off'); 
+    han=axes(fig3,'visible','off'); 
     han.XLabel.Visible='on';
     han.YLabel.Visible='on';
     xlabel(han,'Time, (s)','Interpreter','Latex');
-    ylabel(han,'Velocity, (m/s)','Interpreter','Latex');
+    ylabel('Body Rate, (deg/s)','Interpreter','Latex');
 
     
     % Plot attitude (phi,the,psi)

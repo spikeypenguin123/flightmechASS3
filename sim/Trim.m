@@ -1,5 +1,7 @@
 function aircraft = Trim(aircraft)
-
+    % Input: all initialisation aircraft data
+    % Output: Updated aircraft data with trimmed control inputs
+    
     % Aircraft Data 
     X0 = PullState(aircraft);	% Pull state variables into a 13x1 vector
     uwq = [1, 3, 5];  % Indexs for u, w and q in the state vector
@@ -116,4 +118,8 @@ function aircraft = Trim(aircraft)
       
     % Set the Trimmed State and Control to the aircraft struct
     aircraft = PushState(X0,U0,aircraft);
+    
+    fprintf('AoA = %2.4f (deg) \n', rad2deg(xbar0(1)));
+    fprintf('dT = %2.4f \n', xbar0(2));
+    fprintf('de = %2.4f (deg) \n', rad2deg(xbar0(3)));
 end
