@@ -167,7 +167,7 @@ function PlotData(vectors,t,filename,save)
     grid minor
 %     title('Vertical G-Force','FontName','Latex');
     xlabel('Time, (s)','Interpreter','Latex');
-    ylabel('G-Force','FontName','Latex');
+    ylabel('G-Force','Interpreter','Latex');
     if save == 1
         saveas(gcf,['gforce_',filename,'.png']);
     end
