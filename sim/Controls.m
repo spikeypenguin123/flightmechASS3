@@ -22,11 +22,18 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
                 delta_r = deg2rad(5)+delta_r;
             end
         case 4
-            if t <= 15.6
-                load('Loop.mat');
-                c = controls(:,i);
-                delta_e = c(1) + delta_e;
-            end
+            load('LoopNomCGV2.mat');
+            c = U_filter(:,i);
+            delta_T = c(1)+delta_T;
+            delta_e = deg2rad(c(2))+delta_e;
+            delta_a = deg2rad(c(3))+delta_a;
+            delta_r = deg2rad(c(4))+delta_r;
+            
+%             if t <= 15.6
+%                 load('Controls.mat');
+%                 c = controls(:,i);
+%                 delta_e = c(1) + delta_e;
+%             end
         case 5
             load('2gSideslipTurn.mat');
             c = deg2rad(U_filter(:,i));
@@ -37,12 +44,12 @@ function [delta_T, delta_e, delta_a, delta_r] = Controls(flight_plan, t, i, delt
             delta_r = c(4)+delta_r;
         case 6
             load('StepOnBall.mat'); % steady heading sideslip requires the pilot to "step on the ball"
-            c = deg2rad(U_filter(:,i));
+            c = U_filter(:,i);
             
             delta_T = c(1)+delta_T;
-            delta_e = c(2)+delta_e;
-            delta_a = c(3)+delta_a;
-            delta_r = c(4)+delta_r;
+            delta_e = deg2rad(c(2))+delta_e;
+            delta_a = deg2rad(c(3))+delta_a;
+            delta_r = deg2rad(c(4))+delta_r;
         case 7
             load('DelayedRoll.mat');
             

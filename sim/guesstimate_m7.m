@@ -9,7 +9,7 @@ A = Q*aircraft.geo.S*aircraft.geo.b^2/(aircraft.inertial.Ixx*2*V);
 
 B = Q*aircraft.geo.S*aircraft.geo.b/aircraft.inertial.Ixx*aircraft.aero.Clda;
 
-t_90 = 5;
+t_90 = 2.5;
 p = deg2rad(90/t_90);
 rad2deg(p);
 

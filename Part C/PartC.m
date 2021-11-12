@@ -19,6 +19,8 @@ pos = [500 200 800 550];
 %% Main Code
 
 % TO DO: % Double check how to calculate time constant
+         % Double check if zetas and omegas need to be absolute for
+         % handling conditions
 
 % load helper functions from flight sim
 addpath('../sim')
@@ -31,19 +33,30 @@ plotting = false; % Boolean for whether you want to plot or not
 
 output.data_lon = [];
 output.data_lat = [];
+mat2lat = [];
 
 % Go through each case
 for cg = ["CG1", "CG2"]
     for speed = [100, 180]
         if cg == "CG2" && speed == 180
             % we only do 3 cases so lets call it here
-                output.data_CG1_100_lon = [output.data_lon(:,1) real(output.data_lon(:,2:3))];
-                output.data_CG1_180_lon = [output.data_lon(:,4) real(output.data_lon(:,5:6))];
-                output.data_CG2_100_lon = [output.data_lon(:,7) real(output.data_lon(:,8:9))];
+            format short
+                output.data_CG1_100_lon = [output.data_lon(:,1)];
+                output.omega_zeta_CG1_100_lon = [real(output.data_lon(:,2:3))];
+                output.data_CG1_180_lon = [output.data_lon(:,4)];
+                output.omega_zeta_CG1_180_lon = [real(output.data_lon(:,5:6))];
+                output.data_CG2_100_lon = [output.data_lon(:,7)];
+                output.omega_zeta_CG2_100_lon = [real(output.data_lon(:,8:9))];
 
-                output.data_CG1_100_lat = [output.data_lat(:,1) real(output.data_lat(:,2:3))];
-                output.data_CG1_180_lat = [output.data_lat(:,4) real(output.data_lat(:,5:6))];
-                output.data_CG2_100_lat = [output.data_lat(:,7) real(output.data_lat(:,8:9))];
+                output.data_CG1_100_lat = [output.data_lat(:,1)];
+                output.omega_zeta_CG1_100_lat = [real(output.data_lat(:,2:3))];
+                output.data_CG1_180_lat = [output.data_lat(:,4)];
+                output.omega_zeta_CG1_180_lat = [real(output.data_lat(:,5:6))];
+                output.data_CG2_100_lat = [output.data_lat(:,7)];
+                output.omega_zeta_CG2_100_lat = [real(output.data_lat(:,8:9))];
+                
+                output.omega_zeta = [real(output.data_lon(:,2:3)) real(output.data_lon(:,5:6)) real(output.data_lon(:,8:9)) ...
+                                    real(output.data_lat(:,2:3)) real(output.data_lat(:,5:6)) real(output.data_lat(:,8:9))];
 
                 output.check = output.data_lon;
             return
@@ -123,7 +136,7 @@ for cg = ["CG1", "CG2"]
         % 8B
         
         u1 = V; % delta_T
-        theta1 = 1;    % DOUBLE CHECK
+        theta1 = 0;    % DOUBLE CHECK
         A1 = Ixz/Ixx;
         B1 = Ixz/Izz;
         
@@ -146,6 +159,8 @@ for cg = ["CG1", "CG2"]
         NTb = 0; % Assumed zero for simplicity according to lecture 8B
         
         % Longitudinal State Matrix 
+        A_lon = lon.A_Lon;
+        B_lon = lon.B_Lon;
         % w form
         e_lon = eig(lon.A_Lon);
         [omega_lon, zeta_lon] = damp(e_lon);
@@ -180,8 +195,6 @@ for cg = ["CG1", "CG2"]
         disp(num2str(omega_lat));
         disp('Damping Ratio: ');
         disp(num2str(zeta_lat));
-        
-
         
         
         %% Part B   -- Check for positive values
@@ -256,9 +269,6 @@ for cg = ["CG1", "CG2"]
         % Euler integration
         % Control deflection of 5 deg held for 0.5s and then returned to 0
         % deg
-        
-        A_lon = lon.A_Lon;
-        B_lon = lon.B_Lon;
             
         % Conditions for Euler Integration
         T = 30;

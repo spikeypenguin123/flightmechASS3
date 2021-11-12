@@ -1,15 +1,17 @@
 function aircraft = Trim(aircraft)
 
-    % Extract aircraft parameters
+    % Aircraft Data 
+    X0 = PullState(aircraft);	% Pull state variables into a 13x1 vector
+    uwq = [1, 3, 5];  % Indexs for u, w and q in the state vector
+
+    % Aircraft Data 
+    S = aircraft.geo.S;                             % wing area (m^2)
     m = aircraft.inertial.m;                        % Mass (kg)
     g = aircraft.inertial.g;                        % Gravity (m/s^2)
-    S = aircraft.geo.S;                             % wing area (m^2)
     CL0 = aircraft.aero.CLo;                        % Zero angle of attack lift coefficient
     CLa = aircraft.aero.CLa;                        % dCL/dalpha
     control_min = aircraft.control_limits.Lower;    % Control surface min limit
     control_max = aircraft.control_limits.Upper;    % Control surface max limit
-    X0 = PullState(aircraft);	% Pull state variables into a 13x1 vector
-    uwq = [1 3 5];  % Indexs for u, w and q in the state vector
 
     % Aircraft velocity (m/s)
     V = sqrt(X0(1).^2 + X0(2).^2 + X0(3).^2);
@@ -17,34 +19,33 @@ function aircraft = Trim(aircraft)
     % Dynamic Pressure (kPa)
     [~, Q] = FlowProperties(aircraft, V);
     
-    % Estimate CL (lift coefficient)
+    % Lift coefficient
     CL = m*g/(Q*S);
-    
+
     alpha0 = (CL - CL0)/CLa;    % Estimate for current AoA (rad)
     dT0 = 0.5;                  % Initial Thrust    (Newtons)
     de0 = 0;                    % Initial Elevator  (rad)
     da0 = 0;                    % Initial Aileron   (rad)
     dr0 = 0;                    % Initial Rudder    (rad)
     U0 = [dT0;de0;da0;dr0];     % Initial Control Vector
-
-    % Make Empty Jacobian for speed
-    J = zeros(3);
     
     % Define the xbar vector, i.e. the values to be perturbed
     xbar0 = [alpha0; U0(1); U0(2)];
     
     % Initialise convergance boolean and tolerance
-    converged = false;  % Convergence checker
-    tol = 10e-10;       % Error tolerance
-    err = 1;            % Intitialise Error
-    maxIter = 500;      % Number of iterations
-    n = 1;              % Intitialise Iteration counter
-    delta = 1e-6;       % Perturbation Size
+    tol = 10e-10;           % Error tolerance
+    err = 1;                % Intitialise Error
+    maxIter = 500;          % Number of iterations
+    n = 1;                  % Intitialise Iteration counter
+    delta = 1e-7;           % Perturbation Size
 
+    % Make Empty Jacobian for speed
+    J = zeros(3);
+    
     % Numerical Newton-Ralphson method to solve for control inputs
-    while ~converged      
+    while max(err) >= tol      % Run until the error is sufficiently small and solution has convereged
         
-        % Determine the aircraft pitch (slide 19 Week 9B)
+        % Setting pitch to AoA (slide 19 Week 9B)
         euler_att = q2e(X0(7:10));
         euler_att(2) = xbar0(1);
         X0(7:10) = e2q(euler_att);
@@ -71,7 +72,7 @@ function aircraft = Trim(aircraft)
                 X(1) = V*cos(alphaPert);        % u: x-vel update
                 X(3) = V*sin(alphaPert);        % w: z-vel update
             else
-                % Perturb Throttle and elevator
+                % Perturb the Throttle and Elevator
                 U(i-1) = xbar0(i) + delta;
             end
             
@@ -88,21 +89,18 @@ function aircraft = Trim(aircraft)
         % Determine error
         err = abs((xbar - xbar0)./delta);
         
-        % Check if solution has converged
-        if max(err) < tol
-            converged = true;
-        end
-        
         % Update the x_bar vector storing alpha, dT and de
         xbar0 = xbar;
         
-        % Update the state and input vectors
-        X0(1) = V*cos(xbar0(1));
-        X0(3) = V*sin(xbar0(1));
+        % Control Vector Update 
         U0(1) = xbar0(2);
         U0(2) = xbar0(3);
         
-%       Aircraft control limits
+        % State Vector Update
+        X0(1) = V*cos(xbar0(1));
+        X0(3) = V*sin(xbar0(1));
+
+        % Aircraft control limits
         if any(U0 > control_max) || any(U0 < control_min)
             disp('WARNING: THE THROTTLE OR ELEVATOR HAVE EXCEEDED LIMITS!')
         end
