@@ -5,10 +5,10 @@ clear all
 %% Default plot parameters
 
 alw           = 1;                      % AxesLineWidth
-fsz           = 17;                     % Fontsize
+fsz           = 20;                     % Fontsize
 lw            = 1.4;                    % LineWidth
 msz           = 5;                      % MarkerSize
-leg_s         = 15;                     % Legend size
+leg_s         = 18;                     % Legend size
 set(0,'defaultLineLineWidth',lw);       % set the default line width to lw
 set(0,'defaultLineMarkerSize',msz);     % set the default line marker size to msz
 set(0,'defaultLineLineWidth',lw);       % set the default line width to lw
@@ -28,6 +28,9 @@ addpath('../sim')
 mat1 = load('Longitudinal_Matrices_PC9_nominalCG1_100Kn_1000ft.mat');
 mat2 = load('Longitudinal_Matrices_PC9_nominalCG1_180Kn_1000ft.mat');
 mat3 = load('Longitudinal_Matrices_PC9_CG2_100Kn_1000ft.mat');
+X1 = load('ICs_PC9_nominalCG1_100Kn_1000ft.mat');
+X2 = load('ICs_PC9_nominalCG1_180Kn_1000ft.mat');
+X3 = load('ICs_PC9_CG2_100Kn_1000ft.mat');
 
 plotting = false; % Boolean for whether you want to plot or not
 
@@ -71,10 +74,16 @@ for cg = ["CG1", "CG2"]
         
         if cg == "CG1" && speed == 100
             lon = mat1;
+            att_eul = q2e(X1.X0(7:10)/norm(X1.X0(7:10)));
+            theta = att_eul(2);
         elseif cg == "CG1" && speed == 180
             lon = mat2;
+            att_eul = q2e(X2.X0(7:10)/norm(X2.X0(7:10)));
+            theta = att_eul(2);
         else
             lon = mat3;
+            att_eul = q2e(X3.X0(7:10)/norm(X3.X0(7:10)));
+            theta = att_eul(2);
         end
         
         % alt 1000ft
@@ -136,7 +145,7 @@ for cg = ["CG1", "CG2"]
         % 8B
         
         u1 = V; % delta_T
-        theta1 = 0;    % DOUBLE CHECK
+        theta1 = theta;    % DOUBLE CHECK
         A1 = Ixz/Ixx;
         B1 = Ixz/Izz;
         
@@ -271,7 +280,8 @@ for cg = ["CG1", "CG2"]
         % deg
             
         % Conditions for Euler Integration
-        T = 30;
+        T = 80;
+        time_def = 5; % Time at which 0.5 second deflection occurs
         dT = 0.1;
         Steps = T/dT;
         
@@ -292,7 +302,7 @@ for cg = ["CG1", "CG2"]
             
             time = i*dT;
             
-            if time >= 10 && time <= 10.5
+            if time >= time_def && time <= time_def + 0.5
                 Xdot_lon = A_lon*X_lon(:,i) + B_lon*def;
                 Xdot_lat = A_lat*X_lat(:,i) + B_lat*def;
             else
