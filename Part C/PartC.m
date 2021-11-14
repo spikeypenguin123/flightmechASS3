@@ -5,10 +5,10 @@ clear all
 %% Default plot parameters
 
 alw           = 1;                      % AxesLineWidth
-fsz           = 20;                     % Fontsize
-lw            = 1.4;                    % LineWidth
+fsz           = 23;                     % Fontsize
+lw            = 1.6;                    % LineWidth
 msz           = 5;                      % MarkerSize
-leg_s         = 20;                     % Legend size
+leg_s         = 23;                     % Legend size
 set(0,'defaultLineLineWidth',lw);       % set the default line width to lw
 set(0,'defaultLineMarkerSize',msz);     % set the default line marker size to msz
 set(0,'defaultLineLineWidth',lw);       % set the default line width to lw
@@ -325,7 +325,7 @@ for cg = ["CG1", "CG2"]
         % Control inputs
         % Longitudinal Case - Throttle and Elevator
         % Lateral Directional Case - Aileron and Rudder
-        def = [5 5]'*pi/180;
+        def = [-10 -10]'*pi/180;
         def_zero = [0 0]'*pi/180;
         
         % Longitudinal Case and Lateral-Directional Case Euler Integration
@@ -358,7 +358,7 @@ for cg = ["CG1", "CG2"]
             plot(Time,X_lon(1,:)) % u
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
-            ylabel('$\frac{m}{s}$','Interpreter','latex')
+            ylabel('m/s','Interpreter','latex')
             set(gca,'FontSize',fsz)
             set(gcf,'Position',pos)
             saveas(gcf,['Longitudinal_vel_' + cg + '@' + num2str(speed) + 'kts' + '_dT' ...
@@ -369,7 +369,7 @@ for cg = ["CG1", "CG2"]
             plot(Time,rad2deg(X_lon(3,:))) % q
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
-            ylabel('$\frac{deg}{s}$','Interpreter','latex')
+            ylabel('deg/s','Interpreter','latex')
             set(gca,'FontSize',fsz)
             set(gcf,'Position',pos)
             saveas(gcf,['Longitudinal_rates_' + cg + '@' + num2str(speed) + 'kts' + '_dT' ...
@@ -429,7 +429,7 @@ for cg = ["CG1", "CG2"]
             plot(Time,rad2deg(X_lat(3,:))) % r
             grid on; grid minor; box on
             xlabel('Time (s)','Interpreter','latex')
-            ylabel('$\frac{deg}{s}$','Interpreter','latex')
+            ylabel('deg/s','Interpreter','latex')
             set(gca,'FontSize',fsz)
             set(gcf,'Position',pos)
             leg = legend('p','r',...
